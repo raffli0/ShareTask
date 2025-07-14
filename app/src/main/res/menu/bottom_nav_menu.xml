@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 24dp normal size for icon-->
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/common_google_signin_btn_icon_light_focused"
+        android:title="Home"/>
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="@string/title_profile"/>
+
+</menu>
