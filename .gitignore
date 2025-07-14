@@ -13,3 +13,45 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Gradle
+.gradle/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local Configuration
+.idea/
+
+# Signing Keys
+**/keystore.jks
+**/*.jks
+**/*.keystore
+
+# Firebase Config
+app/google-services.json
+firebase.json
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+
+# Log & Crash
+*.log
+crashlytics-build.properties
+
+# Kotlin specific
+*.kotlin_module
+
+# Jetpack Compose preview cache
+*.preview
+
+# Misc
+*.bak
+*.swp
+*.tmp
+
+# Android Studio Navigation Safe Args
+**/navigation.xml
+
+# Generated binding and debug
+**/generated/
