@@ -15,6 +15,10 @@ import com.google.firebase.ktx.Firebase
 
 class AuthViewModel(private val app: Application) : AndroidViewModel(app) {
 
+    // Firebase Auth & Firestore
+    private val auth = FirebaseAuth.getInstance()
+    private val db = Firebase.firestore
+
     val email = MutableLiveData("")
     val password = MutableLiveData("")
     val name = MutableLiveData("")
@@ -22,9 +26,7 @@ class AuthViewModel(private val app: Application) : AndroidViewModel(app) {
     val angkatan = MutableLiveData("")
     val status = MutableLiveData("")
 
-    private val auth = FirebaseAuth.getInstance()
-    private val db = Firebase.firestore
-
+    // Login pakai Email & Password
     fun loginWithEmail(onSuccess: () -> Unit, onError: (String) -> Unit) {
         val emailValue = email.value ?: ""
         val passwordValue = password.value ?: ""
@@ -88,7 +90,6 @@ class AuthViewModel(private val app: Application) : AndroidViewModel(app) {
             }
     }
 
-
     fun loginWithGoogle(account: GoogleSignInAccount, onSuccess: () -> Unit, onError: (String) -> Unit) {
         val credential = GoogleAuthProvider.getCredential(account?.idToken, null)
         auth.signInWithCredential(credential)
@@ -101,26 +102,23 @@ class AuthViewModel(private val app: Application) : AndroidViewModel(app) {
 
     private fun checkOrCreateUser(user: FirebaseUser, onSuccess: () -> Unit, onError: (String) -> Unit) {
         val userRef = db.collection("users").document(user.uid)
-        userRef.get().addOnSuccessListener {
-            if (it.exists()) {
+        userRef.get().addOnSuccessListener { snapshot ->
+            if (snapshot.exists()) {
                 onSuccess()
             } else {
-                val newUser = user.photoUrl?.toString()?.let { it1 ->
-                    User(
+                val newUser = User(
                         uid = user.uid,
                         name = user.displayName ?: "",
                         email = user.email ?: "",
-                        profilePic = it1
+                        profilePic = user.photoUrl?.toString().orEmpty()
                     )
-                }
-                if (newUser != null) {
+
                     userRef.set(newUser)
                         .addOnSuccessListener { onSuccess() }
-                        .addOnFailureListener { onError("Gagal simpan user") }
-                }
+                        .addOnFailureListener { onError("Gagal menyimpan user.") }
             }
         }.addOnFailureListener {
-            onError("Gagal cek data user")
+            onError("Gagal mengakses data user.")
         }
     }
 

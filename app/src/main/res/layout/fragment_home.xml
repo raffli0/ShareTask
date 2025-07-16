@@ -20,7 +20,7 @@
 
             <!-- Greeting -->
             <TextView
-                android:text='@{"Good Morning, " + vm.userName}'
+                android:text='@{"Welcome Back!, " + vm.userName}'
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_height="wrap_content"

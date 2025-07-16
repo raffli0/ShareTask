@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.sharetask.R
+import com.example.sharetask.adapter.BannerAdapter
 import com.example.sharetask.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
@@ -31,20 +31,20 @@ class HomeFragment : Fragment() {
             binding.viewPagerBanner.adapter = BannerAdapter(it)
         }
 
-        // Category
-        viewModel.categoryList.observe(viewLifecycleOwner) {
-            binding.rvCategory.adapter = CategoryAdapter(it)
-        }
-
-        // Friends
-        viewModel.friendList.observe(viewLifecycleOwner) {
-            binding.rvFriend.adapter = FriendAdapter(it)
-        }
-
-        // Discovery
-        viewModel.discoveryList.observe(viewLifecycleOwner) {
-            binding.rvDiscovery.adapter = DiscoveryAdapter(it)
-        }
+//        // Category
+//        viewModel.categoryList.observe(viewLifecycleOwner) {
+//            binding.rvCategory.adapter = CategoryAdapter(it)
+//        }
+//
+//        // Friends
+//        viewModel.friendList.observe(viewLifecycleOwner) {
+//            binding.rvFriend.adapter = FriendAdapter(it)
+//        }
+//
+//        // Discovery
+//        viewModel.discoveryList.observe(viewLifecycleOwner) {
+//            binding.rvDiscovery.adapter = DiscoveryAdapter(it)
+//        }
     }
 
     override fun onDestroyView() {

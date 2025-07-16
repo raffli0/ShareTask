@@ -5,7 +5,7 @@ data class User(
     val name: String = "",
     val email: String = "",
     val jurusan: String = "",
-    val angkatan: String = "",
+    val role: String = "",
     val profilePic: String = "",
     val rewardPoints: Int = 0
 )

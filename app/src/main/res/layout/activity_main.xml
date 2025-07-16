@@ -7,17 +7,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment
+    <!-- Fragment Container -->
+    <FrameLayout
         android:id="@+id/fragment_container"
-        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_bar"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navGraph="@navigation/mobile_navigation" />
+        android:layout_above="@id/bottom_navigation_bar"/>
 
 <!--    <com.google.android.material.bottomappbar.BottomAppBar-->
 <!--        android:id="@+id/bottomAppBar"-->
@@ -30,14 +25,15 @@
 <!--        app:layout_constraintBottom_toBottomOf="parent"-->
 <!--        tools:ignore="BottomAppBar,MissingConstraints">-->
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_gravity="bottom"
-            android:background="@android:color/transparent"
-            app:menu="@menu/bottom_nav_menu"/>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="?android:attr/windowBackground"
+        app:itemIconTint="@color/nav_selector"
+        app:itemTextColor="@color/nav_selector"
+        app:menu="@menu/bottom_nav_menu"/>
 
 <!--    </com.google.android.material.bottomappbar.BottomAppBar>-->
 

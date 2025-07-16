@@ -25,13 +25,15 @@ class LoginActivity : AppCompatActivity() {
         ViewModelProvider.AndroidViewModelFactory.getInstance(application)
     }
 
+    // Handle hasil dari Google Sign-In
     private val googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         if (task.isSuccessful) {
             val account = task.result
-            viewModel.loginWithGoogle(account, {
-                goToMain()
-            }, { showToast(it) })
+            viewModel.loginWithGoogle(account,
+                onSuccess = { goToMain() },
+                onError = { showToast(it) }
+            )
         } else {
             showToast("Login Google gagal")
         }
@@ -42,22 +44,29 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // DataBinding dan ViewModel
         binding.lifecycleOwner = this
         binding.vm = viewModel
 
+        // Login pakai Email & Password
         binding.btnLogin.setOnClickListener {
-            viewModel.loginWithEmail({ goToMain() }, { showToast(it) })
+            viewModel.loginWithEmail(
+                onSuccess = { goToMain() },
+                onError = { showToast(it) }
+            )
         }
 
+        // Login pakai Akun Google
         binding.btnGoogle.setOnClickListener {
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
-            val client = GoogleSignIn.getClient(this, gso)
-            googleSignInLauncher.launch(client.signInIntent)
+            val googleClient = GoogleSignIn.getClient(this, gso)
+            googleSignInLauncher.launch(googleClient.signInIntent)
         }
 
+        // Arahkan ke halaman Register
         binding.tvSignUp.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
@@ -66,27 +75,29 @@ class LoginActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            user.reload() //cek apakah akun masih valid di server
-                .addOnSuccessListener {
-                    if (user.isEmailVerified || user.uid.isNotEmpty()) {
-                        goToMain()
-                    } else {
-                        FirebaseAuth.getInstance().signOut()
-                    }
-                }
-                .addOnFailureListener {
-                    // akun sudah dihapus dari server
-                    FirebaseAuth.getInstance().signOut()
-                }
+
+        // Auto-login kalau user sudah login sebelumnya
+        user?.reload()?.addOnSuccessListener { //user.reload() adalah kunci untuk cek akun masih valid di Firebase
+            if (user.uid.isNotEmpty()) {
+                goToMain()
+            } else {
+                FirebaseAuth.getInstance().signOut()
+            }
+        }?.addOnFailureListener {
+            // Akun sudah dihapus dari Firebase, logout local
+            FirebaseAuth.getInstance().signOut()
         }
     }
 
+    // Fungsi navigasi ke MainActivity (Dashboard)
     private fun goToMain() {
-        val i = Intent(this, MainActivity::class.java)
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(i)
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
     }
 
-    private fun showToast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    // Fungsi memunculkan Toast
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
 }
