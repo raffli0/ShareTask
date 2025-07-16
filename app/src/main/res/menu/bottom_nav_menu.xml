@@ -3,13 +3,23 @@
 
     <!-- 24dp normal size for icon-->
     <item
-        android:id="@+id/navigation_home"
-        android:icon="@drawable/common_google_signin_btn_icon_light_focused"
-        android:title="Home"/>
-
-    <item
-        android:id="@+id/navigation_profile"
+        android:id="@+id/nav_home"
         android:icon="@drawable/ic_launcher_foreground"
-        android:title="@string/title_profile"/>
-
+        android:title="Home"/>
+    <item
+        android:id="@+id/nav_bookmark"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="Bookmark"/>
+    <item
+        android:id="@+id/nav_upload"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="Upload"/>
+    <item
+        android:id="@+id/nav_notification"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="Notification"/>
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="Profile"/>
 </menu>

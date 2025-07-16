@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
             name="vm"
             type="com.example.sharetask.viewmodel.AuthViewModel" />
     </data>
 
+    <androidx.core.widget.NestedScrollView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:background="@drawable/bg_gradient"
+        android:fillViewport="true">
+
     <!--  Layout View  -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/bg_gradient"
+        android:layout_height="wrap_content"
         tools:context=".ui.auth.LoginActivity">
 
         <!-- Card Container -->
@@ -63,7 +67,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/don_t_have_an_account" />
+                        android:text="Don’t have an account? " />
 
                     <TextView
                         android:id="@+id/tvSignUp"
@@ -89,6 +93,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Email"
+                        android:text="@={vm.email}"
                         android:inputType="textEmailAddress"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -107,6 +112,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Password"
+                        android:text="@={vm.password}"
                         android:inputType="textPassword"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -183,19 +189,23 @@
                 </LinearLayout>
 
                 <!-- Google Login -->
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnGoogle"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="@string/continue_with_google"
                     android:textAllCaps="false"
                     android:backgroundTint="@android:color/white"
+                    app:strokeColor="@android:color/darker_gray"
+                    app:strokeWidth="1dp"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="8dp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </layout>
 

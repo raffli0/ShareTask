@@ -65,8 +65,20 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (FirebaseAuth.getInstance().currentUser != null) {
-            goToMain()
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            user.reload() //cek apakah akun masih valid di server
+                .addOnSuccessListener {
+                    if (user.isEmailVerified || user.uid.isNotEmpty()) {
+                        goToMain()
+                    } else {
+                        FirebaseAuth.getInstance().signOut()
+                    }
+                }
+                .addOnFailureListener {
+                    // akun sudah dihapus dari server
+                    FirebaseAuth.getInstance().signOut()
+                }
         }
     }
 

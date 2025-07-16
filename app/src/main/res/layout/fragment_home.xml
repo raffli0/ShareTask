@@ -1,72 +1,84 @@
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/scrollView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_gradient"
-    android:padding="16dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="vm"
+            type="com.example.sharetask.ui.home.HomeViewModel" />
+    </data>
 
-    <LinearLayout
-        android:id="@+id/homeRoot"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/menu_home"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <!-- Header -->
-        <TextView
-            android:id="@+id/tvGreeting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Good Morning, Aban!"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-
-        <!-- Card Promo -->
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
+            android:padding="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            android:backgroundTint="#E3F2FD"
-            android:layout_marginBottom="16dp">
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:padding="16dp"
+            <!-- Greeting -->
+            <TextView
+                android:text='@{"Good Morning, " + vm.userName}'
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+            <TextView
+                android:text="Let's learn something today"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp"
+                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+
+            <!-- Banner ViewPager2 -->
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPagerBanner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="180dp"
+                android:layout_marginBottom="16dp"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Upload catatanmu dan bantu mahasiswa lain!"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="8dp"/>
+            <!-- Category -->
+            <TextView
+                android:text="Category"
+                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
 
-                <com.google.android.material.button.MaterialButton
-                    android:text="Upload Sekarang"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"/>
 
-        <!-- Title -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Dokumen Populer"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+            <!-- Friend List -->
+            <TextView
+                android:text="Friendlist"
+                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
 
-        <!-- RecyclerView -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvDiscovery"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"/>
-<!--            tools:listitem="@layout/item_document_card"/>-->
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvFriend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"/>
+
+            <!-- Discovery -->
+            <TextView
+                android:text="Discovery"
+                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvDiscovery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>
