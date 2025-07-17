@@ -3,37 +3,30 @@ package com.example.sharetask.ui.auth
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.sharetask.R
+import com.example.sharetask.data.model.AuthResult
 import com.example.sharetask.databinding.ActivityLoginBinding
 import com.example.sharetask.ui.main.MainActivity
 import com.example.sharetask.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
-
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private val viewModel: AuthViewModel by viewModels {
-        ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-    }
+    private val viewModel: AuthViewModel by viewModels()
 
-    // Handle hasil dari Google Sign-In
-    private val googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val googleSignInLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         if (task.isSuccessful) {
-            val account = task.result
-            viewModel.loginWithGoogle(account,
-                onSuccess = { goToMain() },
-                onError = { showToast(it) }
-            )
+            task.result?.let { viewModel.loginWithGoogle(it, true) }
         } else {
             showToast("Login Google gagal")
         }
@@ -44,59 +37,57 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // DataBinding dan ViewModel
         binding.lifecycleOwner = this
         binding.vm = viewModel
 
-        // Login pakai Email & Password
-        binding.btnLogin.setOnClickListener {
-            viewModel.loginWithEmail(
-                onSuccess = { goToMain() },
-                onError = { showToast(it) }
-            )
-        }
-
-        // Login pakai Akun Google
-        binding.btnGoogle.setOnClickListener {
-            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build()
-            val googleClient = GoogleSignIn.getClient(this, gso)
-            googleSignInLauncher.launch(googleClient.signInIntent)
-        }
-
-        // Arahkan ke halaman Register
+        binding.btnLogin.setOnClickListener { viewModel.loginWithEmail() }
+        binding.btnGoogle.setOnClickListener { signInWithGoogle() }
         binding.tvSignUp.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
+
+        observeAuthentication()
     }
 
     override fun onStart() {
         super.onStart()
-        val user = FirebaseAuth.getInstance().currentUser
+        // Auto-login should be handled in a dedicated Splash/Launcher activity,
+        // not here, to prevent unexpected behavior when navigating from RegisterActivity.
+    }
 
-        // Auto-login kalau user sudah login sebelumnya
-        user?.reload()?.addOnSuccessListener { //user.reload() adalah kunci untuk cek akun masih valid di Firebase
-            if (user.uid.isNotEmpty()) {
-                goToMain()
-            } else {
-                FirebaseAuth.getInstance().signOut()
+    private fun observeAuthentication() {
+        lifecycleScope.launch {
+            viewModel.authResult.collect { result ->
+                when (result) {
+                    is AuthResult.Loading -> { /* Show loading indicator */ }
+                    is AuthResult.Success -> {
+                        goToMain()
+                    }
+                    is AuthResult.Error -> {
+                        Toast.makeText(this@LoginActivity, result.message, Toast.LENGTH_SHORT).show()
+                    }
+                    null -> { /* Initial state */ }
+                }
             }
-        }?.addOnFailureListener {
-            // Akun sudah dihapus dari Firebase, logout local
-            FirebaseAuth.getInstance().signOut()
         }
     }
 
-    // Fungsi navigasi ke MainActivity (Dashboard)
+    private fun signInWithGoogle() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        val googleClient = GoogleSignIn.getClient(this, gso)
+        googleSignInLauncher.launch(googleClient.signInIntent)
+    }
+
     private fun goToMain() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
+        viewModel.resetAuthResult()
     }
 
-    // Fungsi memunculkan Toast
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }

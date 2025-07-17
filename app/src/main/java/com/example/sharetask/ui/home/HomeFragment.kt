@@ -1,13 +1,15 @@
 package com.example.sharetask.ui.home
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.sharetask.adapter.BannerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.example.sharetask.adapter.CategoryAdapter
+import com.example.sharetask.adapter.FriendAdapter
 import com.example.sharetask.databinding.FragmentHomeBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment() {
 
@@ -16,7 +18,8 @@ class HomeFragment : Fragment() {
     private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -26,25 +29,22 @@ class HomeFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // Banner
-        viewModel.bannerList.observe(viewLifecycleOwner) {
-            binding.viewPagerBanner.adapter = BannerAdapter(it)
-        }
+        super.onViewCreated(view, savedInstanceState)
 
-//        // Category
-//        viewModel.categoryList.observe(viewLifecycleOwner) {
-//            binding.rvCategory.adapter = CategoryAdapter(it)
-//        }
-//
-//        // Friends
-//        viewModel.friendList.observe(viewLifecycleOwner) {
-//            binding.rvFriend.adapter = FriendAdapter(it)
-//        }
-//
-//        // Discovery
-//        viewModel.discoveryList.observe(viewLifecycleOwner) {
-//            binding.rvDiscovery.adapter = DiscoveryAdapter(it)
-//        }
+        val user = FirebaseAuth.getInstance().currentUser
+        viewModel.setUserName(user?.displayName ?: "User")
+
+        // Setup Adapters
+        binding.rvFriendlist.adapter = FriendAdapter(getSampleFriends())
+        binding.rvDiscovery.adapter = CategoryAdapter(getSampleDiscovery())
+    }
+
+    private fun getSampleFriends(): List<String> {
+        return listOf("Friend 1", "Friend 2", "Friend 3", "Friend 4", "Friend 5")
+    }
+
+    private fun getSampleDiscovery(): List<String> {
+        return listOf("Discovery 1", "Discovery 2", "Discovery 3", "Discovery 4")
     }
 
     override fun onDestroyView() {

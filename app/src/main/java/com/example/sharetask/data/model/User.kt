@@ -4,8 +4,7 @@ data class User(
     val uid: String = "",
     val name: String = "",
     val email: String = "",
-    val jurusan: String = "",
-    val role: String = "",
-    val profilePic: String = "",
-    val rewardPoints: Int = 0
+    val role: String = "", //beginer - professional
+    val profilePic: String = "", //fetch dari acc google atau isi sendiri
+    val rewardPoints: Int = 0 //berdasar banyaknya menjawab
 )

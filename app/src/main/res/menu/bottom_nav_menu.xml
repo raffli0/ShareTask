@@ -3,23 +3,23 @@
 
     <!-- 24dp normal size for icon-->
     <item
-        android:id="@+id/nav_home"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:id="@+id/menu_home"
+        android:icon="@drawable/ic_home"
         android:title="Home"/>
     <item
-        android:id="@+id/nav_bookmark"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:id="@+id/menu_bookmark"
+        android:icon="@drawable/ic_bookmark"
         android:title="Bookmark"/>
     <item
-        android:id="@+id/nav_upload"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:id="@+id/menu_upload"
+        android:icon="@drawable/ic_upload"
         android:title="Upload"/>
     <item
-        android:id="@+id/nav_notification"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:id="@+id/menu_notification"
+        android:icon="@drawable/ic_notification"
         android:title="Notification"/>
     <item
-        android:id="@+id/nav_profile"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:id="@+id/menu_profile"
+        android:icon="@drawable/ic_profile"
         android:title="Profile"/>
 </menu>
