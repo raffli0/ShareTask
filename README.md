@@ -10,21 +10,20 @@
 ---
 
 ## ✨ Fitur Utama
-* **Otentikasi Google:** Pengguna dapat masuk dengan cepat dan aman menggunakan akun Google mereka.
-* **Database Real-time:** Data disimpan dan disinkronkan secara instan menggunakan Cloud Firestore.
-* **Penyimpanan File:** Pengguna dapat mengunggah dan mengelola file (misalnya, gambar profil) yang disimpan di Supabase Storage.
+* **Otentikasi Google:** Pengguna dapat SignIn dan LogIn dengan cepat dan aman menggunakan akun Google.
+* **Database Real-time:** Data disimpan dan disinkronkan secara instan menggunakan Firestore Database.
+* **Penyimpanan File:** Pengguna dapat mengunggah dan mengelola file seperti documen atau foto yang disimpan di Supabase Storage.
 * **[Fitur Kunci Lainnya]:** Jelaskan fitur utama lain dari aplikasi Anda.
 
 ---
 
 ## 🛠️ Teknologi & Arsitektur
 * **Bahasa:** [Kotlin](https://kotlinlang.org/)
-* **UI Toolkit:** [Pilih salah satu: Jetpack Compose / Android XML Views]
-* **Arsitektur:** [Contoh: MVVM (Model-View-ViewModel)]
+* **UI Toolkit:** [Android XML Views]
+* **Arsitektur:** [MVVM (Model-View-ViewModel)]
 * **Database:** [Cloud Firestore](https://firebase.google.com/docs/firestore)
 * **Otentikasi:** [Firebase Authentication](https://firebase.google.com/docs/auth)
 * **Penyimpanan File:** [Supabase Storage](https://supabase.com/docs/guides/storage)
-* **Dependency Injection:** [Contoh: Hilt, Koin] (Jika menggunakan)
 
 ---
 
