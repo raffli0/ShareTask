@@ -42,6 +42,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.firebase:firebase-firestore-ktx:24.9.1")
     implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
@@ -52,6 +53,7 @@ dependencies {
     implementation ("com.google.android.gms:play-services-auth:21.0.0")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

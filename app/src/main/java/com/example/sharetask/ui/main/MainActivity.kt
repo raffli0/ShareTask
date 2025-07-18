@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         activeFragment = fragment  // Update fragment aktif
     }
 
-    private fun refreshActiveFragment() {
+    fun refreshActiveFragment() {
         // Cek fragment aktif dan panggil metode refresh jika ada
         when (activeFragment) {
             is HomeFragment -> (activeFragment as HomeFragment).refreshData()

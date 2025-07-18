@@ -8,10 +8,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.sharetask.databinding.FragmentUploadBinding
+import com.example.sharetask.ui.main.MainActivity
+import com.example.sharetask.viewmodel.UploadState
 import com.example.sharetask.viewmodel.UploadViewModel
+import com.google.android.material.snackbar.Snackbar
 
 class UploadFragment : Fragment() {
 
@@ -19,20 +23,7 @@ class UploadFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: UploadViewModel by viewModels()
 
-    private val filePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data: Intent? = result.data
-            // TODO: Handle the selected file URI from data.data
-            data?.data?.let { selectedFileUri ->
-                viewModel.setSelectedFile(selectedFileUri)
-                binding.selectFileButton.text = "File Selected" // Indicate a file is selected
-            }
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    // Remove file picker as we don't need it anymore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,12 +34,45 @@ class UploadFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
         }
 
-        binding.selectFileButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_GET_CONTENT).apply { type = "*/*" } // Allow all file types for now.  Consider filtering.
-            filePickerLauncher.launch(intent)
-        }
+        setupViews()
+        observeViewModel()
 
-        return binding.root // Return the root view of the binding
+        return binding.root
+    }
+
+    private fun setupViews() {
+        binding.uploadButton.setOnClickListener {
+            onUploadButtonClicked()
+        }
+    }
+
+    private fun observeViewModel() {
+        viewModel.uploadState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is UploadState.Loading -> {
+                    binding.uploadButton.isEnabled = false
+                    binding.uploadButton.text = "Uploading..."
+                }
+                is UploadState.Success -> {
+                    binding.uploadButton.isEnabled = true
+                    binding.uploadButton.text = "Upload"
+                    binding.descriptionEditText.setText("")
+                    Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
+                    // Refresh HomeFragment
+                    (requireActivity() as MainActivity).refreshActiveFragment()
+                }
+                is UploadState.Error -> {
+                    binding.uploadButton.isEnabled = true
+                    binding.uploadButton.text = "Upload"
+                    Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG)
+                        .setAction("Retry") { onUploadButtonClicked() }
+                        .show()
+                }
+                null -> {
+                    // Initial state
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -56,15 +80,14 @@ class UploadFragment : Fragment() {
         _binding = null
     }
 
-    // This function will be called from the layout when the upload button is clicked
-    fun onUploadButtonClicked() {
+    private fun onUploadButtonClicked() {
         val description = binding.descriptionEditText.text.toString()
-        // TODO: Implement the upload logic using viewModel.selectedFile and description
-        viewModel.uploadFile(description)
+        viewModel.uploadTask(description)
     }
 
-    // Consider adding refreshData() if you need to reload data within the fragment.
     fun refreshData() {
-        TODO("Not yet implemented")
+        binding.uploadButton.isEnabled = true
+        binding.uploadButton.text = "Upload"
+        binding.descriptionEditText.setText("")
     }
 }

@@ -5,7 +5,7 @@
     <data>
         <variable
             name="vm"
-            type="com.example.sharetask.ui.home.HomeViewModel" />
+            type="com.example.sharetask.viewmodel.HomeViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -124,7 +124,7 @@
                         style="@style/Widget.MaterialComponents.Chip.Choice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Animal Name"
+                        android:text="Coding"
                         app:chipBackgroundColor="@color/blue"
                         app:chipStrokeColor="@color/blue"
                         app:chipStrokeWidth="1dp"
@@ -136,13 +136,13 @@
                         style="@style/Widget.MaterialComponents.Chip.Choice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Challenge" />
+                        android:text="Jaringan Komputer" />
 
                     <com.google.android.material.chip.Chip
                         style="@style/Widget.MaterialComponents.Chip.Choice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Mini Quiz" />
+                        android:text="Keamanan Komputer" />
 
                 </com.google.android.material.chip.ChipGroup>
 

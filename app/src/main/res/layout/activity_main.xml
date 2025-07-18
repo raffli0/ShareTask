@@ -5,19 +5,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
 
     <!-- Fragment Container -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottom_navigation_bar"/>
+        android:layout_marginBottom="58dp">
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -25,11 +26,18 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_bar"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="58dp"
             android:layout_gravity="bottom"
-            android:background="?android:attr/windowBackground"
-            app:itemIconTint="@color/nav_selector"
-            app:itemTextColor="@color/nav_selector"
-            app:menu="@menu/bottom_nav_menu"/>
+            android:background="@drawable/bg_bottom_nav_with_stroke"
+            android:elevation="0dp"
+            app:itemIconSize="24dp"
+            app:itemPaddingTop="4dp"
+            app:itemPaddingBottom="4dp"
+            app:itemIconTint="@color/bottom_nav_colors"
+            app:itemTextColor="@color/bottom_nav_colors"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_nav_menu"
+            app:itemTextAppearanceInactive="@style/BottomNav.Text"
+            app:itemTextAppearanceActive="@style/BottomNav.Text"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
