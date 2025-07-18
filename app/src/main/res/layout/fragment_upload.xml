@@ -7,17 +7,76 @@
             type="com.example.sharetask.ui.menu.UploadFragment" />
     </data>
 
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/menu_upload"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.menu.UploadFragment">
-
-    <TextView
+    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/menu_upload"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Upload Fragemnt" />
+        android:background="#F5F5F5"
+        android:fillViewport="true"
+        tools:context=".ui.menu.UploadFragment">
 
-</androidx.core.widget.NestedScrollView>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_upload_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upload Task"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_upload_title">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+        <EditText
+            android:id="@+id/descriptionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter description"
+            android:padding="12dp"
+            android:inputType="textMultiLine"
+            android:lines="3"
+            android:gravity="top"
+            android:layout_marginBottom="16dp"/>
+
+        <Button
+            android:backgroundTint="@color/blue"
+            android:id="@+id/selectFileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select File" />
+
+        <Button
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/blue"
+            android:id="@+id/uploadButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Upload" />
+    </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 </layout>

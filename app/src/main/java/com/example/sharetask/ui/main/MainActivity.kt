@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.example.sharetask.R
+import com.example.sharetask.adapter.FriendAdapter
 import com.example.sharetask.databinding.ActivityMainBinding
 import com.example.sharetask.ui.home.HomeFragment
 import com.example.sharetask.ui.menu.BookmarkFragment
@@ -25,6 +26,10 @@ class MainActivity : AppCompatActivity() {
         // Inflate layout pakai ViewBinding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.swipeRefresh.setOnRefreshListener {
+            refreshActiveFragment()
+        }
 
         // Perubahan menu yang dipilih dari ViewModel
         mainViewModel.selectedMenuId.observe(this, Observer { menuId ->
@@ -49,6 +54,10 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             mainViewModel.selectMenu(R.id.menu_home)
         }
+
+        // Set the distance to trigger refresh (e.g., 200dp)
+        val density = resources.displayMetrics.density
+        binding.swipeRefresh.setDistanceToTriggerSync((200 * density).toInt()) // 200dp
     }
 
     private fun setFragment(fragment: Fragment) {
@@ -67,5 +76,17 @@ class MainActivity : AppCompatActivity() {
             .commit()
 
         activeFragment = fragment  // Update fragment aktif
+    }
+
+    private fun refreshActiveFragment() {
+        // Cek fragment aktif dan panggil metode refresh jika ada
+        when (activeFragment) {
+            is HomeFragment -> (activeFragment as HomeFragment).refreshData()
+            is BookmarkFragment -> (activeFragment as BookmarkFragment).refreshData()
+            is UploadFragment -> (activeFragment as UploadFragment).refreshData()
+            is NotificationFragment -> (activeFragment as NotificationFragment).refreshData()
+            is ProfileFragment -> (activeFragment as ProfileFragment).refreshData()
+        }
+        binding.swipeRefresh.isRefreshing = false // Hentikan animasi refreshing
     }
 }

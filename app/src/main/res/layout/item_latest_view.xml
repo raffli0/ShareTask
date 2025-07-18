@@ -1,0 +1,64 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/iv_view_thumbnail"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_launcher_foreground"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_doc_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Dokumen Super Semar"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_view_thumbnail"
+            app:layout_constraintTop_toTopOf="@+id/iv_view_thumbnail" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:progress="75"
+            app:layout_constraintEnd_toEndOf="@+id/tv_doc_title"
+            app:layout_constraintStart_toStartOf="@+id/tv_doc_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_doc_title" />
+
+        <TextView
+            android:id="@+id/tv_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="75/100"
+            app:layout_constraintEnd_toEndOf="@+id/progress_bar"
+            app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
+
+        <Button
+            android:id="@+id/btn_continue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Continue"
+            app:layout_constraintStart_toStartOf="@+id/progress_bar"
+            app:layout_constraintTop_toBottomOf="@+id/tv_score" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

@@ -107,6 +107,7 @@
                     android:gravity="center"
                     android:orientation="vertical">
 
+                    <!-- Answer stats items-->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -120,9 +121,77 @@
                         android:layout_height="wrap_content"
                         android:text="Answer"
                         android:textColor="@color/gray" />
-                </LinearLayout>
-                <!-- Other stats items here -->
 
+                </LinearLayout>
+                <!-- Following stats here -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2.781"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Following"
+                        android:textColor="@color/gray" />
+
+                </LinearLayout>
+                <!-- Followers stats here -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2.781"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Followers"
+                        android:textColor="@color/gray" />
+
+                </LinearLayout>
+                <!-- Friends stats here -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2.781"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Friends"
+                        android:textColor="@color/gray" />
+
+                </LinearLayout>
             </LinearLayout>
 
             <Button

@@ -55,15 +55,19 @@ class ProfileFragment : Fragment() {
             startActivity(intent)
         }
 
-        binding.rvLatestView.adapter = LatestViewAdapter(getSampleLatestPlay())
+        binding.rvLatestView.adapter = LatestViewAdapter(getSampleLatestView())
     }
 
-    private fun getSampleLatestPlay(): List<String> {
+    private fun getSampleLatestView(): List<String> {
         return listOf("View 1", "View 2", "View 3")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun refreshData() {
+        binding.rvLatestView.adapter = LatestViewAdapter(getSampleLatestView())
     }
 }

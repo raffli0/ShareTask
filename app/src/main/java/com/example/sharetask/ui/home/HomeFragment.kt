@@ -37,6 +37,12 @@ class HomeFragment : Fragment() {
         // Setup Adapters
         binding.rvFriendlist.adapter = FriendAdapter(getSampleFriends())
         binding.rvDiscovery.adapter = CategoryAdapter(getSampleDiscovery())
+        }
+
+    fun refreshData() {
+        // Simulate refreshing data
+        binding.rvFriendlist.adapter = FriendAdapter(getSampleFriends())
+        binding.rvDiscovery.adapter = CategoryAdapter(getSampleDiscovery())
     }
 
     private fun getSampleFriends(): List<String> {

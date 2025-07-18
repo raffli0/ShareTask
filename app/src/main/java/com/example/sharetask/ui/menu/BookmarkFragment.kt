@@ -29,4 +29,8 @@ class BookmarkFragment : Fragment() {
     ): View {
         return inflater.inflate(R.layout.fragment_bookmark, container, false)
     }
+
+    fun refreshData() {
+        TODO("Not yet implemented")
+    }
 }

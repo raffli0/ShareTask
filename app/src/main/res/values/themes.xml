@@ -1,9 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.ShareTask" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowIsTranslucent">true</item>
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <!--  Splash screen theme.  -->
+    <style name="Splash.Theme.ShareTask" parent="Base.Theme.ShareTask">
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="Theme.ShareTask" parent="Base.Theme.ShareTask" />

@@ -17,7 +17,7 @@
         <activity
             android:name=".SplashActivity"
             android:exported="true"
-            android:theme="@style/Base.Theme.ShareTask">
+            android:theme="@style/Splash.Theme.ShareTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
