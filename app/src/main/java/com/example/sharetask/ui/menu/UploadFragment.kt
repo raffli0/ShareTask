@@ -64,4 +64,7 @@ class UploadFragment : Fragment() {
     }
 
     // Consider adding refreshData() if you need to reload data within the fragment.
+    fun refreshData() {
+        TODO("Not yet implemented")
+    }
 }

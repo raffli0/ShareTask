@@ -58,7 +58,7 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:id="@+id/tv_play_quiz_title"
+                        android:id="@+id/tv_share_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Share task with your friends"
@@ -70,7 +70,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <Button
-                        android:id="@+id/btn_play_now"
+                        android:id="@+id/btn_share_now"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
@@ -78,7 +78,7 @@
                         android:text="Share Now!"
                         android:textColor="@color/blue"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_play_quiz_title" />
+                        app:layout_constraintTop_toBottomOf="@+id/tv_share_title" />
 
                     <ImageView
                         android:id="@+id/iv_quiz_illustration"
