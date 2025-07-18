@@ -10,7 +10,7 @@
 ---
 
 ## ✨ Fitur Utama
-* **Otentikasi Google:** Pengguna dapat SignIn dan LogIn dengan cepat dan aman menggunakan akun Google.
+* **Otentikasi Google:** Pengguna dapat SignIn dan LogIn secara aman dan cepat menggunakan akun Google yang sudah ada.
 * **Database Real-time:** Data disimpan dan disinkronkan secara instan menggunakan Firestore Database.
 * **Penyimpanan File:** Pengguna dapat mengunggah dan mengelola file seperti documen atau foto yang disimpan di Supabase Storage.
 * **[Fitur Kunci Lainnya]:** Jelaskan fitur utama lain dari aplikasi Anda.
