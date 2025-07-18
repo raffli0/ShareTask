@@ -6,8 +6,5 @@
     <color name="blue_toga">#1666C5</color>
     <color name="blue">#0F9AFE</color>
     <color name="blue_secondary">#26E4FF</color>
-    <color name="blue_dark">#0066CC</color>
-    <color name="blue_light">#E6F3FF</color>
-    <color name="blue_accent">#00B4D8</color>
     <color name="gray">#808080</color>
 </resources>
