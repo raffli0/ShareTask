@@ -4,11 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.sharetask.data.StorageService
 import com.example.sharetask.data.model.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.io.File
 import java.util.UUID
 
 class UploadViewModel : ViewModel() {
@@ -17,8 +19,9 @@ class UploadViewModel : ViewModel() {
 
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val storageService = StorageService()
 
-    fun uploadTask(description: String) {
+    fun uploadDocument(file: File, mimeType: String, description: String) {
         viewModelScope.launch {
             try {
                 _uploadState.value = UploadState.Loading
@@ -35,23 +38,33 @@ class UploadViewModel : ViewModel() {
                     return@launch
                 }
 
-                // Create task document
-                val task = Task(
-                    id = UUID.randomUUID().toString(),
-                    description = description,
-                    uploadedBy = user.displayName ?: "Anonymous",
-                    uploadedByPhotoUrl = user.photoUrl?.toString() ?: "",
-                )
+                // Upload document to Supabase
+                val documentUploadResult = storageService.uploadDocument(file, mimeType)
+                
+                if (documentUploadResult.isSuccess) {
+                    val documentUrl = documentUploadResult.getOrNull()
+                    
+                    // Create task document with document URL
+                    val task = Task(
+                        id = UUID.randomUUID().toString(),
+                        description = description,
+                        uploadedBy = user.displayName ?: "Anonymous",
+                        uploadedByPhotoUrl = user.photoUrl?.toString() ?: "",
+                        documentUrl = documentUrl
+                    )
 
-                // Save to Firestore
-                firestore.collection("tasks")
-                    .document(task.id)
-                    .set(task)
-                    .await()
+                    // Save to Firestore
+                    firestore.collection("tasks")
+                        .document(task.id)
+                        .set(task)
+                        .await()
 
-                _uploadState.value = UploadState.Success("Task uploaded successfully")
+                    _uploadState.value = UploadState.Success("Document uploaded successfully")
+                } else {
+                    _uploadState.value = UploadState.Error("Failed to upload document: ${documentUploadResult.exceptionOrNull()?.message}")
+                }
             } catch (e: Exception) {
-                _uploadState.value = UploadState.Error(e.message ?: "Upload failed")
+                _uploadState.value = UploadState.Error("Upload failed: ${e.message}")
             }
         }
     }

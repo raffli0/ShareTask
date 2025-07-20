@@ -35,7 +35,7 @@
                 android:id="@+id/tv_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lets learn something today!"
+                android:text="Let's learn something today!"
                 android:textColor="@color/gray"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"

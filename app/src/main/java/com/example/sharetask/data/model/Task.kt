@@ -5,5 +5,6 @@ data class Task(
     val description: String = "",
     val uploadedBy: String = "",
     val uploadedByPhotoUrl: String = "",
+    val documentUrl: String? = null,
     val timestamp: Long = System.currentTimeMillis()
 )
