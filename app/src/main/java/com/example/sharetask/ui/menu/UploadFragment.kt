@@ -2,15 +2,19 @@ package com.example.sharetask.ui.menu
 
 import android.app.Activity
 import android.content.Intent
-import androidx.fragment.app.viewModels
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.activity.result.ActivityResult
+import android.widget.PopupMenu
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.example.sharetask.R
+import com.example.sharetask.data.model.Subject
 import com.example.sharetask.databinding.FragmentUploadBinding
 import com.example.sharetask.ui.main.MainActivity
 import com.example.sharetask.viewmodel.UploadState
@@ -22,51 +26,135 @@ class UploadFragment : Fragment() {
     private var _binding: FragmentUploadBinding? = null
     private val binding get() = _binding!!
     private val viewModel: UploadViewModel by viewModels()
+    private var selectedImageUri: Uri? = null
+    private var selectedSubject: Subject? = null
 
-    // Remove file picker as we don't need it anymore
+    private val imagePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            selectedImageUri = it
+            binding.imagePreview.apply {
+                setImageURI(it)
+                visibility = View.VISIBLE
+            }
+        }
+    }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentUploadBinding.inflate(inflater, container, false).apply {
-            vm = this@UploadFragment
             lifecycleOwner = viewLifecycleOwner
         }
-
-        setupViews()
-        observeViewModel()
-
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupViews()
+        observeViewModel()
+    }
+
     private fun setupViews() {
-        binding.uploadButton.setOnClickListener {
-            onUploadButtonClicked()
+        with(binding) {
+            // Subject selection
+            categoryButton.setOnClickListener {
+                showSubjectMenu()
+            }
+
+            // Image selection
+            selectImageButton.setOnClickListener {
+                imagePickerLauncher.launch("image/*")
+            }
+
+            // Upload button
+            uploadButton.setOnClickListener {
+                if (validateInput()) {
+                    uploadTask()
+                }
+            }
+
+            // Image preview click to remove
+            imagePreview.setOnClickListener {
+                selectedImageUri = null
+                imagePreview.visibility = View.GONE
+            }
         }
+    }
+
+    private fun showSubjectMenu() {
+        val popup = PopupMenu(requireContext(), binding.categoryButton)
+        
+        // Add subjects to menu
+        getSubjects().forEachIndexed { index, subject ->
+            popup.menu.add(0, index, index, subject.name)
+        }
+
+        popup.setOnMenuItemClickListener { menuItem ->
+            val subject = getSubjects()[menuItem.itemId]
+            selectedSubject = subject
+            binding.categoryButton.text = subject.name
+            true
+        }
+
+        popup.show()
+    }
+
+    private fun getSubjects(): List<Subject> {
+        return listOf(
+            Subject("1", "Computer Security", "CS"),
+            Subject("2", "Mobile Development", "MOB"),
+            Subject("3", "Web Development", "WEB"),
+            Subject("4", "Artificial Intelligence", "AI"),
+            Subject("5", "Architecture Computer", "ARC"),
+            Subject("6", "Cyber Security", "SEC"),
+            Subject("7", "Web Development", "WEB"),
+            Subject("8", "Project Management", "PM")
+        )
+    }
+
+    private fun validateInput(): Boolean {
+        //validasi subject
+        if (selectedSubject == null) {
+            showError("Please select a subject")
+            return false
+        }
+
+        // Validasi teks wajib diisi
+        if (binding.descriptionEditText.text.isNullOrBlank()) {
+            showError("Please enter your question")
+            return false
+        }
+        return true
+    }
+
+    private fun uploadTask() {
+        val description = binding.descriptionEditText.text.toString().trim()
+        viewModel.uploadTask(
+            description = description,
+            imageUri = selectedImageUri,
+            subject = selectedSubject
+        )
     }
 
     private fun observeViewModel() {
         viewModel.uploadState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is UploadState.Loading -> {
-                    binding.uploadButton.isEnabled = false
-                    binding.uploadButton.text = "Uploading..."
+                    setLoadingState(true)
                 }
                 is UploadState.Success -> {
-                    binding.uploadButton.isEnabled = true
-                    binding.uploadButton.text = "Upload"
-                    binding.descriptionEditText.setText("")
-                    Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
-                    // Refresh HomeFragment
-                    (requireActivity() as MainActivity).refreshActiveFragment()
+                    setLoadingState(false)
+                    clearForm()
+                    showSuccess(state.message)
+                    findNavController().navigateUp()
                 }
                 is UploadState.Error -> {
-                    binding.uploadButton.isEnabled = true
-                    binding.uploadButton.text = "Upload"
-                    Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG)
-                        .setAction("Retry") { onUploadButtonClicked() }
-                        .show()
+                    setLoadingState(false)
+                    showError(state.message)
                 }
                 null -> {
                     // Initial state
@@ -75,19 +163,39 @@ class UploadFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun setLoadingState(isLoading: Boolean) {
+        binding.uploadButton.isEnabled = !isLoading
+        binding.uploadButton.text = if (isLoading) "Uploading..." else "ASK"
+        binding.selectImageButton.isEnabled = !isLoading
+        binding.categoryButton.isEnabled = !isLoading
+        binding.descriptionEditText.isEnabled = !isLoading
     }
 
-    private fun onUploadButtonClicked() {
-        val description = binding.descriptionEditText.text.toString()
-        viewModel.uploadTask(description)
+    private fun clearForm() {
+        binding.descriptionEditText.setText("")
+        binding.imagePreview.visibility = View.GONE
+        selectedImageUri = null
+        selectedSubject = null
+        binding.categoryButton.text = "SUBJECT"
+    }
+
+    private fun showError(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+            .setAction("OK") { }
+            .show()
+    }
+
+    private fun showSuccess(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
     }
 
     fun refreshData() {
-        binding.uploadButton.isEnabled = true
-        binding.uploadButton.text = "Upload"
-        binding.descriptionEditText.setText("")
+        clearForm()
+        setLoadingState(false)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

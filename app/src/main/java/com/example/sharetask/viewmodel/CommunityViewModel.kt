@@ -10,48 +10,31 @@ import com.google.firebase.firestore.Query
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class HomeViewModel : ViewModel() {
-    private val _tasks = MutableLiveData<List<Task>>()
-    val tasks: LiveData<List<Task>> = _tasks
-
-    private val _userName = MutableLiveData<String>()
-    val userName: LiveData<String> = _userName
+class CommunityViewModel : ViewModel() {
+    private val _questions = MutableLiveData<List<Task>>()
+    val questions: LiveData<List<Task>> = _questions
 
     private val firestore = FirebaseFirestore.getInstance()
-    private var allTasks: List<Task> = emptyList()
 
     init {
-        loadTasks()
+        loadQuestions()
     }
 
-    fun setUserName(name: String) {
-        _userName.value = name
-    }
-
-    fun loadTasks() {
+    fun loadQuestions() {
         viewModelScope.launch {
             try {
                 val snapshot = firestore.collection("tasks")
                     .orderBy("timestamp", Query.Direction.DESCENDING)
-                    .limit(10)
                     .get()
                     .await()
 
-                allTasks = snapshot.documents.mapNotNull { doc ->
+                val tasks = snapshot.documents.mapNotNull { doc ->
                     doc.toObject(Task::class.java)
                 }
-                _tasks.value = allTasks
+                _questions.value = tasks
             } catch (e: Exception) {
                 // Handle error
             }
         }
     }
-
-    fun filterTasksBySubject(subjectId: String) {
-        if (subjectId.isEmpty()) {
-            _tasks.value = allTasks
-        } else {
-            _tasks.value = allTasks.filter { it.subjectId == subjectId }
-        }
-    }
-}
+} 

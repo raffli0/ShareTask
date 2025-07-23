@@ -2,6 +2,7 @@ package com.example.sharetask.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.sharetask.data.model.AuthResult
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -19,6 +20,8 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
     val password = MutableLiveData("")
 
     private val _authResult = MutableStateFlow<AuthResult?>(null)
+    private val _clearInput = MutableLiveData<Boolean>()
+    val clearInput: LiveData<Boolean> = _clearInput
     val authResult: StateFlow<AuthResult?> = _authResult
 
     fun registerWithEmail() {

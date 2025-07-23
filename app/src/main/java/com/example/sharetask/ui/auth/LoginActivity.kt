@@ -55,6 +55,7 @@ class LoginActivity : AppCompatActivity() {
         // not here, to prevent unexpected behavior when navigating from RegisterActivity.
     }
 
+    // Fungsi untuk mengamati perubahan hasil autentikasi dari ViewModel
     private fun observeAuthentication() {
         lifecycleScope.launch {
             viewModel.authResult.collect { result ->
@@ -72,6 +73,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    // Fungsi untuk memulai proses login dengan Google
     private fun signInWithGoogle() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))

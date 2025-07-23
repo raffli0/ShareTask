@@ -2,32 +2,37 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mobile_navigation">
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/menu_home">
 
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@+id/menu_home"
         android:name="com.example.sharetask.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home"/>
+        android:label="Home"
+        tools:layout="@layout/fragment_home" />
+
     <fragment
-        android:id="@+id/navigation_bookmark"
-        android:name="com.example.sharetask.ui.menu.BookmarkFragment"
-        android:label="Bookmark"
-        tools:layout="@layout/fragment_bookmark"/>
+        android:id="@+id/menu_forum"
+        android:name="com.example.sharetask.ui.community.CommunityFragment"
+        android:label="Forum"
+        tools:layout="@layout/fragment_community" />
+
     <fragment
-        android:id="@+id/navigation_upload"
+        android:id="@+id/menu_upload"
         android:name="com.example.sharetask.ui.menu.UploadFragment"
         android:label="Upload"
-        tools:layout="@layout/fragment_upload"/>
+        tools:layout="@layout/fragment_upload" />
+
     <fragment
-        android:id="@+id/navigation_notification"
+        android:id="@+id/menu_notification"
         android:name="com.example.sharetask.ui.menu.NotificationFragment"
         android:label="Notification"
-        tools:layout="@layout/fragment_notification"/>
+        tools:layout="@layout/fragment_notification" />
+
     <fragment
-        android:id="@+id/navigation_profile"
+        android:id="@+id/menu_profile"
         android:name="com.example.sharetask.ui.menu.ProfileFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile"/>
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
 
 </navigation>

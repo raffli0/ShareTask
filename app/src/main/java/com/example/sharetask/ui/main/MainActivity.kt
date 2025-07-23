@@ -9,7 +9,7 @@ import com.example.sharetask.R
 import com.example.sharetask.adapter.FriendAdapter
 import com.example.sharetask.databinding.ActivityMainBinding
 import com.example.sharetask.ui.home.HomeFragment
-import com.example.sharetask.ui.menu.BookmarkFragment
+import com.example.sharetask.ui.community.CommunityFragment
 import com.example.sharetask.ui.menu.NotificationFragment
 import com.example.sharetask.ui.menu.ProfileFragment
 import com.example.sharetask.ui.menu.UploadFragment
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.selectedMenuId.observe(this, Observer { menuId ->
             val selectedFragment = when (menuId) {
                 R.id.menu_home -> HomeFragment()
-                R.id.menu_bookmark -> BookmarkFragment()
+                R.id.menu_forum -> CommunityFragment()
                 R.id.menu_upload -> UploadFragment()
                 R.id.menu_notification -> NotificationFragment()
                 R.id.menu_profile -> ProfileFragment()
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
             mainViewModel.selectMenu(R.id.menu_home)
         }
 
-        // Set the distance to trigger refresh (e.g., 200dp)
+        // Atur jarak trigger refresh
         val density = resources.displayMetrics.density
         binding.swipeRefresh.setDistanceToTriggerSync((200 * density).toInt()) // 200dp
     }
@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
                 R.anim.slide_out_right    // fragment keluar saat kembali
             )
             .replace(R.id.fragment_container, fragment) // Ganti fragment container
+            .addToBackStack(null) // Tambahkan ke backstack
             .commit()
 
         activeFragment = fragment  // Update fragment aktif
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         // Cek fragment aktif dan panggil metode refresh jika ada
         when (activeFragment) {
             is HomeFragment -> (activeFragment as HomeFragment).refreshData()
-            is BookmarkFragment -> (activeFragment as BookmarkFragment).refreshData()
+            is CommunityFragment -> (activeFragment as CommunityFragment).refreshData()
             is UploadFragment -> (activeFragment as UploadFragment).refreshData()
             is NotificationFragment -> (activeFragment as NotificationFragment).refreshData()
             is ProfileFragment -> (activeFragment as ProfileFragment).refreshData()

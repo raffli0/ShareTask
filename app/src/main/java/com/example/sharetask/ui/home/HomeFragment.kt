@@ -6,10 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.sharetask.adapter.TaskAdapter
+import com.example.sharetask.R
 import com.example.sharetask.adapter.FriendAdapter
+import com.example.sharetask.data.model.Subject
 import com.example.sharetask.databinding.FragmentHomeBinding
+import com.example.sharetask.ui.community.CommunityFragment
+import com.example.sharetask.ui.community.QuestionAdapter
+import com.example.sharetask.ui.menu.UploadFragment
 import com.example.sharetask.viewmodel.HomeViewModel
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment() {
@@ -17,7 +23,8 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
-    private val taskAdapter = TaskAdapter()
+    private val questionAdapter = QuestionAdapter()
+    private var selectedSubject: Subject? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,20 +43,103 @@ class HomeFragment : Fragment() {
         val user = FirebaseAuth.getInstance().currentUser
         viewModel.setUserName(user?.displayName ?: "User")
 
-        setupAdapters()
+        setupViews()
         observeViewModel()
-        viewModel.loadTasks() // Load tasks when fragment is created
     }
 
-    private fun setupAdapters() {
-        binding.rvFriendlist.adapter = FriendAdapter(getSampleFriends())
-        binding.rvDiscovery.adapter = taskAdapter
+    private fun setupViews() {
+        with(binding) {
+            viewModel.loadTasks() // Load tasks when fragment is created
+            rvDiscovery.adapter = questionAdapter
+            rvFriendlist.adapter = FriendAdapter(getSampleFriends())
+
+            // Setup Categories
+            setupCategories()
+
+            // Share Now button
+            btnShareNow.setOnClickListener {
+                val fragment = UploadFragment()
+                requireActivity()
+                    .supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+
+            // View All button
+            tvViewAll.setOnClickListener {
+                val fragment = CommunityFragment()
+                requireActivity()
+                    .supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
+    }
+
+    private fun setupCategories() {
+        binding.chipGroupCategory.apply {
+            removeAllViews() // Clear existing chips
+            
+            // Set single selection to false to allow uncheck
+            isSingleSelection = true
+            setOnCheckedStateChangeListener { group, checkedIds ->
+                if (checkedIds.isEmpty()) {
+                    // No chip selected, show all items
+                    selectedSubject = null
+                    viewModel.filterTasksBySubject("")
+                }
+            }
+        }
+        
+        getSubjects().forEach { subject ->
+            val chip = layoutInflater.inflate(
+                R.layout.item_chip_choice,
+                binding.chipGroupCategory,
+                false
+            ) as Chip
+
+            chip.apply {
+                text = subject.name
+                id = View.generateViewId() // Generate unique ID for the chip
+                
+                setOnCheckedChangeListener { buttonView, isChecked ->
+                    if (isChecked) {
+                        selectedSubject = subject
+                        viewModel.filterTasksBySubject(subject.id)
+                    } else if (binding.chipGroupCategory.checkedChipIds.isEmpty()) {
+                        // If this was the last checked chip, show all items
+                        selectedSubject = null
+                        viewModel.filterTasksBySubject("")
+                    }
+                }
+            }
+
+            binding.chipGroupCategory.addView(chip)
+        }
+    }
+
+    private fun getSubjects(): List<Subject> {
+        return listOf(
+            Subject("1", "Computer Security", "CS"),
+            Subject("2", "Mobile Development", "MOB"),
+            Subject("3", "Web Development", "WEB"),
+            Subject("4", "Artificial Intelligence", "AI"),
+            Subject("5", "Architecture Computer", "ARC"),
+            Subject("6", "Cyber Security", "SEC"),
+            Subject("7", "Web Development", "WEB"),
+            Subject("8", "Project Management", "PM")
+        )
     }
 
     private fun observeViewModel() {
+        // Observe tasks and limit to 5 items
         viewModel.tasks.observe(viewLifecycleOwner) { tasks ->
-            android.util.Log.d("HomeFragment", "Received tasks: ${tasks?.size}")
-            taskAdapter.submitList(tasks)
+            // Submit the first 5 tasks to the adapter
+            questionAdapter.submitList(tasks.take(5))
         }
     }
 
@@ -57,12 +147,12 @@ class HomeFragment : Fragment() {
         viewModel.loadTasks()
     }
 
-    private fun getSampleFriends(): List<String> {
-        return listOf("Friend 1", "Friend 2", "Friend 3", "Friend 4", "Friend 5")
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun getSampleFriends(): List<String> {
+        return listOf("Friend 1", "Friend 2", "Friend 3", "Friend 4", "Friend 5")
     }
 }

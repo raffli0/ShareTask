@@ -49,6 +49,7 @@ class RegisterActivity : AppCompatActivity() {
         observeAuthentication()
     }
 
+    // Fungsi untuk mengamati perubahan hasil autentikasi dari ViewModel
     private fun observeAuthentication() {
         lifecycleScope.launch {
             viewModel.authResult.collect { result ->
@@ -57,6 +58,12 @@ class RegisterActivity : AppCompatActivity() {
                     is AuthResult.Success -> {
                         Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
                         // Don't navigate to login, let the user do it manually.
+
+                        // reset input field
+                        binding.etFullName.text?.clear()
+                        binding.etEmail.text?.clear()
+                        binding.etPassword.text?.clear()
+
                         viewModel.resetAuthResult()
                     }
                     is AuthResult.Error -> {
@@ -68,6 +75,7 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    // Fungsi untuk memulai proses login dengan Google
     private fun signInWithGoogle() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -76,6 +84,7 @@ class RegisterActivity : AppCompatActivity() {
         val googleClient = GoogleSignIn.getClient(this, gso)
         googleSignInLauncher.launch(googleClient.signInIntent)
     }
+
 
     private fun goToLogin() {
         val intent = Intent(this, LoginActivity::class.java)

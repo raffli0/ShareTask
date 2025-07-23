@@ -86,7 +86,7 @@
                 android:textColor="@color/white"
                 app:chipBackgroundColor="#4CAF50"
                 app:chipCornerRadius="8dp"
-                app:chipMinHeight="10dp"
+                app:chipMinHeight="12dp"
                 app:chipStartPadding="8dp"
                 app:chipEndPadding="8dp"
                 app:textStartPadding="4dp"

@@ -1,16 +1,17 @@
 package com.example.sharetask.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.sharetask.data.StorageService
+import com.example.sharetask.data.model.Subject
 import com.example.sharetask.data.model.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.io.File
 import java.util.UUID
 
 class UploadViewModel : ViewModel() {
@@ -18,18 +19,13 @@ class UploadViewModel : ViewModel() {
     val uploadState: LiveData<UploadState> = _uploadState
 
     private val firestore = FirebaseFirestore.getInstance()
+    private val storage = FirebaseStorage.getInstance()
     private val auth = FirebaseAuth.getInstance()
-    private val storageService = StorageService()
 
-    fun uploadDocument(file: File, mimeType: String, description: String) {
+    fun uploadTask(description: String, imageUri: Uri? = null, subject: Subject? = null) {
         viewModelScope.launch {
             try {
                 _uploadState.value = UploadState.Loading
-
-                if (description.isBlank()) {
-                    _uploadState.value = UploadState.Error("Please enter a description")
-                    return@launch
-                }
 
                 // Get current user
                 val user = auth.currentUser
@@ -38,33 +34,36 @@ class UploadViewModel : ViewModel() {
                     return@launch
                 }
 
-                // Upload document to Supabase
-                val documentUploadResult = storageService.uploadDocument(file, mimeType)
-                
-                if (documentUploadResult.isSuccess) {
-                    val documentUrl = documentUploadResult.getOrNull()
-                    
-                    // Create task document with document URL
-                    val task = Task(
-                        id = UUID.randomUUID().toString(),
-                        description = description,
-                        uploadedBy = user.displayName ?: "Anonymous",
-                        uploadedByPhotoUrl = user.photoUrl?.toString() ?: "",
-                        documentUrl = documentUrl
-                    )
-
-                    // Save to Firestore
-                    firestore.collection("tasks")
-                        .document(task.id)
-                        .set(task)
-                        .await()
-
-                    _uploadState.value = UploadState.Success("Document uploaded successfully")
-                } else {
-                    _uploadState.value = UploadState.Error("Failed to upload document: ${documentUploadResult.exceptionOrNull()?.message}")
+                // Upload image if provided
+                var imageUrl: String? = null
+                if (imageUri != null) {
+                    val imageRef = storage.reference.child("task_images/${UUID.randomUUID()}")
+                    imageRef.putFile(imageUri).await()
+                    imageUrl = imageRef.downloadUrl.await().toString()
                 }
+
+                // Create task document
+                val task = Task(
+                    id = UUID.randomUUID().toString(),
+                    description = description,
+                    uploadedBy = user.displayName ?: "Anonymous",
+                    uploadedByPhotoUrl = user.photoUrl?.toString() ?: "",
+                    imageUrl = imageUrl,
+                    subjectId = subject?.id ?: "",
+                    subjectName = subject?.name ?: "",
+                    subjectCode = subject?.code ?: "",
+                    timestamp = System.currentTimeMillis()
+                )
+
+                // Save to Firestore
+                firestore.collection("tasks")
+                    .document(task.id)
+                    .set(task)
+                    .await()
+
+                _uploadState.value = UploadState.Success("Question posted successfully")
             } catch (e: Exception) {
-                _uploadState.value = UploadState.Error("Upload failed: ${e.message}")
+                _uploadState.value = UploadState.Error(e.message ?: "Upload failed")
             }
         }
     }
