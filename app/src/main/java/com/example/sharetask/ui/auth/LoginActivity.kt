@@ -13,6 +13,7 @@ import com.example.sharetask.databinding.ActivityLoginBinding
 import com.example.sharetask.ui.main.MainActivity
 import com.example.sharetask.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import kotlinx.coroutines.launch
 
@@ -20,6 +21,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: AuthViewModel by viewModels()
+    private lateinit var googleSignInClient: GoogleSignInClient
 
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -28,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
         if (task.isSuccessful) {
             task.result?.let { viewModel.loginWithGoogle(it, true) }
         } else {
-            showToast("Login Google gagal")
+            // Handle jika user membatalkan login
         }
     }
 
@@ -39,6 +41,13 @@ class LoginActivity : AppCompatActivity() {
 
         binding.lifecycleOwner = this
         binding.vm = viewModel
+
+        // Inisialisasi GoogleSignInClient
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id)) // Pastikan ID ini benar dari Firebase Console
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         binding.btnLogin.setOnClickListener { viewModel.loginWithEmail() }
         binding.btnGoogle.setOnClickListener { signInWithGoogle() }
@@ -75,13 +84,10 @@ class LoginActivity : AppCompatActivity() {
 
     // Fungsi untuk memulai proses login dengan Google
     private fun signInWithGoogle() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        val googleClient = GoogleSignIn.getClient(this, gso)
-        googleSignInLauncher.launch(googleClient.signInIntent)
+        val signInIntent = googleSignInClient.signInIntent
+        googleSignInLauncher.launch(signInIntent)
     }
+
 
     private fun goToMain() {
         val intent = Intent(this, MainActivity::class.java)

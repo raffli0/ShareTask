@@ -188,7 +188,7 @@
                         android:id="@+id/btnGoogle"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:text="@string/continue_with_google"
+                        android:text="@string/register_with_google"
                         android:textAllCaps="false"
                         android:backgroundTint="@android:color/white"
                         app:strokeColor="@android:color/darker_gray"

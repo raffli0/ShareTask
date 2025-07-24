@@ -26,9 +26,9 @@ class RegisterActivity : AppCompatActivity() {
     ) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         if (task.isSuccessful) {
-            task.result?.let { viewModel.loginWithGoogle(it, isRegister = true) }
+            task.result?.let { viewModel.loginWithGoogle(it, false) }
         } else {
-            showToast("Login Google gagal")
+            // Handle jika user membatalkan login
         }
     }
 
@@ -43,7 +43,7 @@ class RegisterActivity : AppCompatActivity() {
         binding.btnRegister.setOnClickListener { viewModel.registerWithEmail() }
         binding.btnGoogle.setOnClickListener { signInWithGoogle() }
         binding.tvLogin.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
+            goToLogin()
         }
 
         observeAuthentication()
@@ -85,15 +85,10 @@ class RegisterActivity : AppCompatActivity() {
         googleSignInLauncher.launch(googleClient.signInIntent)
     }
 
-
     private fun goToLogin() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         viewModel.resetAuthResult()
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

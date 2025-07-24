@@ -20,7 +20,6 @@
     <string name="log_in">Log In</string>
     <string name="masuk">Masuk</string>
     <string name="continue_with_google">Continue with Google</string>
-    <string name="continue_with_email">Continue dengan Email</string>
-    <string name="lanjutkan_dengan_google">Lanjutkan dengan Google</string>
-<!--    <string name="default_web_client_id">748693501422-l48tbjoob828u23ca06a9o6q3b7jjahr.apps.googleusercontent.com</string>-->
+    <string name="login_with_google">Login with Google</string>
+    <string name="register_with_google">Register with Google</string>
 </resources>
