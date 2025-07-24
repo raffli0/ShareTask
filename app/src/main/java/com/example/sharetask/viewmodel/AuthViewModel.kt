@@ -20,8 +20,8 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
     val password = MutableLiveData("")
 
     private val _authResult = MutableStateFlow<AuthResult?>(null)
-    private val _clearInput = MutableLiveData<Boolean>()
-    val clearInput: LiveData<Boolean> = _clearInput
+//    private val _clearInput = MutableLiveData<Boolean>()
+//    val clearInput: LiveData<Boolean> = _clearInput
     val authResult: StateFlow<AuthResult?> = _authResult
 
     fun registerWithEmail() {
@@ -72,6 +72,13 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
                 _authResult.value = AuthResult.Success("Login berhasil.")
             }
             .addOnFailureListener { e ->
+                val message = if (e.message?.contains("email address is already in use") == true) {
+                    "Email sudah terdaftar."
+                } else if (e.message?.contains("wrong password") == true) {
+                    "Password salah."
+                } else {
+                    e.localizedMessage ?: "Login gagal."
+                }
                 _authResult.value = AuthResult.Error(e.localizedMessage ?: "Login gagal.")
             }
     }
@@ -79,14 +86,16 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
     fun loginWithGoogle(account: GoogleSignInAccount, isRegister: Boolean) {
         _authResult.value = AuthResult.Loading
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+
         auth.signInWithCredential(credential)
             .addOnSuccessListener {
                 _authResult.value = AuthResult.Success("Login berhasil.")
             }
             .addOnFailureListener { e ->
-                _authResult.value = AuthResult.Error(e.localizedMessage ?: "Login Google gagal.")
+                _authResult.value = AuthResult.Error(e.localizedMessage ?: "Login gagal.")
             }
     }
+
 
     fun resetAuthResult() {
         _authResult.value = null
