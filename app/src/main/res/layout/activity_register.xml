@@ -48,10 +48,10 @@
                     <!-- Logo -->
                     <ImageView
                         android:id="@+id/logoImage"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:contentDescription="Logo"
-                        android:layout_marginBottom="16dp"/>
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:src="@drawable/logo"
+                        android:contentDescription="Logo" />
 
                     <!-- Sign Up Title -->
                     <TextView
