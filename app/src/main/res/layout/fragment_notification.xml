@@ -1,14 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/menu_notification"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.menu.NotificationFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
+    <data>
+        <!-- ViewModel jika diperlukan -->
+        <!-- <variable name="viewModel" type="com.example.yourapp.viewmodel.NotificationViewModel" /> -->
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="This is fragment notification" />
+        android:background="?android:colorBackground"
+        tools:context=".ui.menu.NotificationFragment">
 
-</FrameLayout>
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar_layout_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorSurface"
+            app:elevation="4dp"> <!-- Memberi sedikit bayangan -->
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar_notification"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:title="Notifications"
+                app:titleTextColor="?attr/colorOnSurface" />
+            <!--
+                Jika Anda ingin menambahkan tombol "Mark all as read" di Toolbar:
+                <ImageButton
+                    android:id="@+id/btn_mark_all_read"
+                    android:layout_width="wrap_content"
+                    android:layout_height="?attr/actionBarSize"
+                    android:src="@drawable/ic_done_all"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:layout_gravity="end"
+                    android:paddingHorizontal="16dp"
+                    android:contentDescription="Mark all as read"
+                    app:tint="?attr/colorOnSurface"
+                    app:layout_anchor="@id/toolbar_notification"
+                    app:layout_anchorGravity="end|center_vertical" />
+            -->
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Konten Utama: Daftar Notifikasi atau Empty State -->
+        <FrameLayout
+            android:id="@+id/notification_content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_notifications"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_notification"
+                tools:itemCount="5"
+                android:visibility="gone" /> <!-- Default gone, diatur dari kode -->
+
+            <!-- Empty State Layout (Mirip dengan yang ada di Home untuk Friendlist) -->
+            <LinearLayout
+                android:id="@+id/empty_notifications_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="32dp"
+                android:background="@drawable/bg_empty_state_rounded"
+                android:layout_margin="16dp"
+                android:visibility="visible"> <!-- Default visible, diatur dari kode -->
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_forum"
+                    app:tint="@color/black"
+                    android:contentDescription="No new notifications" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="No New Notifications"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="You're all caught up! Check back later for new updates."
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textAlignment="center" />
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

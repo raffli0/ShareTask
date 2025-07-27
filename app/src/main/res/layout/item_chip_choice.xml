@@ -10,4 +10,5 @@
     app:chipStrokeColor="@color/blue"
     app:chipStrokeWidth="1dp"
     app:checkedIconVisible="false"
-    android:checkable="true"/> 
+    android:checkable="true"/>
+

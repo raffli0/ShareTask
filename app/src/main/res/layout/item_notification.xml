@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"> <!-- Efek ripple saat diklik -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/notification_item_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Indikator Belum Dibaca (Lingkaran Kecil) -->
+        <View
+            android:id="@+id/unread_indicator"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:background="@drawable/bg_unread_indicator"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_notification_title"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_notification_title"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/iv_notification_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@+id/unread_indicator"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:src="@drawable/ic_forum"
+            app:tint="?attr/colorPrimary"
+            android:contentDescription="Notification icon" />
+
+        <TextView
+            android:id="@+id/tv_notification_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold"
+            tools:text="New Reply in Your Post"
+            app:layout_constraintStart_toEndOf="@+id/iv_notification_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_notification_body"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:maxLines="2"
+            android:ellipsize="end"
+            tools:text="John Doe replied to your question about Android Development. Check it out now!"
+            app:layout_constraintStart_toStartOf="@+id/tv_notification_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_notification_title"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_notification_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            tools:text="2 hours ago"
+            app:layout_constraintStart_toStartOf="@+id/tv_notification_body"
+            app:layout_constraintTop_toBottomOf="@+id/tv_notification_body"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

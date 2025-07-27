@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:layout_marginTop="8dp"
-                android:text="+ AJUKAN PERTANYAAN"
+                android:text="+ ASK A QUESTION"
                 android:textSize="12sp"
                 android:backgroundTint="@color/blue"
                 android:textColor="@color/white"/>
@@ -66,7 +66,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Jawab pertanyaan"
+                        android:text="Answer Questions"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold"/>
@@ -75,7 +75,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Bantu siswa lainnya dengan cara berbagi ilmu dan dapatkan imbalannya!"
+                        android:text="Help fellow students by sharing your knowledge and earn rewards!"
                         android:textColor="#666666"
                         android:textSize="12sp"/>
 
@@ -94,7 +94,7 @@
             android:id="@+id/tvSharingTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SARING PERTANYAAN"
+            android:text="FILTER QUESTIONS"
             android:textColor="#666666"
             android:textSize="12sp"
             android:layout_marginStart="16dp"

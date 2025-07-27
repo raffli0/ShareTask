@@ -8,6 +8,7 @@ import com.example.sharetask.data.model.AuthResult
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -44,8 +45,19 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
         }
 
         auth.createUserWithEmailAndPassword(emailValue, passwordValue)
-            .addOnSuccessListener {
-                _authResult.value = AuthResult.Success("Registrasi berhasil, silahkan login.")
+            .addOnCompleteListener() { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
+
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(nameValue)
+                        .build()
+                    user?.updateProfile(profileUpdates)?.addOnCompleteListener { profileUpdateTask ->
+                        if (profileUpdateTask.isSuccessful) {
+                            _authResult.value = AuthResult.Success("Registrasi berhasil, silahkan login.", isNewUser = true, isGoogleSignIn = false)
+                        }
+                    }
+                }
             }
             .addOnFailureListener { e ->
                 val message = if (e.message?.contains("email address is already in use") == true) {
@@ -83,16 +95,46 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
             }
     }
 
-    fun loginWithGoogle(account: GoogleSignInAccount, isRegister: Boolean) {
+    fun loginWithGoogle(googleSignInAccount: GoogleSignInAccount, canRegisterNewUser: Boolean) {
         _authResult.value = AuthResult.Loading
-        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        val credential = GoogleAuthProvider.getCredential(googleSignInAccount.idToken, null)
 
         auth.signInWithCredential(credential)
-            .addOnSuccessListener {
-                _authResult.value = AuthResult.Success("Login berhasil.")
-            }
-            .addOnFailureListener { e ->
-                _authResult.value = AuthResult.Error(e.localizedMessage ?: "Login gagal.")
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
+                    if (user != null) {
+                        val isNewUser = task.result?.additionalUserInfo?.isNewUser ?: false
+
+                        if (isNewUser) {
+                            // Pengguna baru, akun Google baru saja dibuat di Firebase
+                            val displayName = googleSignInAccount.displayName ?: "Pengguna Baru"
+                            val email = googleSignInAccount.email
+                            // saveUserDetails(user.uid, displayName, email) // Simpan detail jika perlu
+                            _authResult.value = AuthResult.Success(
+                                message = "Pendaftaran dengan Google berhasil! Akun Anda telah dibuat.",
+                                isNewUser = true,
+                                isGoogleSignIn = true,
+                            )
+                        } else {
+                            // Pengguna sudah ada, mencoba "mendaftar" dengan akun yang sudah terdaftar.
+                            // Di sini kita bisa memberikan pesan spesifik.
+                            _authResult.value = AuthResult.Success( // Tetap Success karena mereka berhasil diautentikasi
+                                message = "Akun Google ini sudah terdaftar. Anda akan login.",
+                                isNewUser = false,
+                                isGoogleSignIn = true
+                            )
+                            // Alternatifnya, ini bisa dianggap sebagai AuthResult.Info atau jenis lain jika
+                            // Anda ingin UI bereaksi sangat berbeda. Tapi untuk sekarang, Success dengan pesan
+                            // yang jelas sudah cukup baik, dan pengguna akan diloginkan.
+                        }
+                    } else {
+                        _authResult.value = AuthResult.Error("Gagal mendapatkan informasi pengguna.")
+                    }
+                } else {
+                    // Gagal login/daftar dengan Google
+                    _authResult.value = AuthResult.Error("Autentikasi Google gagal: ${task.exception?.message}")
+                }
             }
     }
 
@@ -100,4 +142,6 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
     fun resetAuthResult() {
         _authResult.value = null
     }
+
+
 }
