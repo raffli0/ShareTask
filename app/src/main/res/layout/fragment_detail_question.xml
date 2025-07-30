@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <!-- ViewModel untuk DetailQuestionViewModel -->
+        <!-- <variable name="viewModel" type="com.example.yourapp.viewmodel.DetailQuestionViewModel" /> -->
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:colorBackground">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar_layout_detail_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorSurface"
+            app:elevation="4dp">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar_detail_question"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:navigationIcon="@drawable/arrow_back"
+            app:title="Answer"
+            app:titleTextColor="?attr/colorOnSurface" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="80dp"> <!-- Padding bawah untuk memberi ruang bagi FAB atau input -->
+
+                <!-- Bagian Konten Pertanyaan Utama -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_question_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:cardElevation="2dp"
+                    app:cardCornerRadius="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <!-- Informasi Penanya -->
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp">
+
+                            <com.google.android.material.imageview.ShapeableImageView
+                                android:id="@+id/iv_asker_avatar"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:scaleType="centerCrop"
+                                tools:src="@drawable/avatar"
+                                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/tv_asker_name"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                tools:text="Jane Doe"
+                                android:textAppearance="?attr/textAppearanceSubtitle1"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toEndOf="@+id/iv_asker_avatar"
+                                app:layout_constraintTop_toTopOf="@+id/iv_asker_avatar"
+                                app:layout_constraintEnd_toEndOf="parent"/>
+
+                            <TextView
+                                android:id="@+id/tv_question_time"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                tools:text="Posted 2 hours ago"
+                                android:textAppearance="?attr/textAppearanceCaption"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                app:layout_constraintStart_toStartOf="@+id/tv_asker_name"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_asker_name"
+                                app:layout_constraintEnd_toEndOf="parent"/>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <!-- Judul Pertanyaan -->
+                        <TextView
+                            android:id="@+id/tv_question_title_detail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="How to implement RecyclerView with multiple view types?"
+                            android:textAppearance="?attr/textAppearanceHeadline6"
+                            android:textColor="?attr/colorOnSurface"
+                            android:layout_marginBottom="8dp"/>
+
+                        <!-- Isi Pertanyaan -->
+                        <TextView
+                            android:id="@+id/tv_question_body_detail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="I'm trying to create a complex list in my Android app using RecyclerView. I need to display different types of items (e.g., headers, image items, text items) in the same list. What's the best approach to handle this? Any code examples would be greatly appreciated. Thanks!"
+                            android:textAppearance="?attr/textAppearanceBody1"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:lineSpacingMultiplier="1.2"
+                            android:layout_marginBottom="16dp"/>
+
+                        <!-- Tags/Kategori (Opsional) -->
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chip_group_tags_detail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            app:chipSpacingHorizontal="4dp">
+                            <!-- Contoh Chip -->
+                            <com.google.android.material.chip.Chip
+                                style="@style/Widget.MaterialComponents.Chip.Entry"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Android" />
+                            <com.google.android.material.chip.Chip
+                                style="@style/Widget.MaterialComponents.Chip.Entry"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="RecyclerView" />
+                        </com.google.android.material.chip.ChipGroup>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Pembatas atau Judul Seksi Jawaban -->
+                <TextView
+                    android:id="@+id/tv_answers_section_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Answers (3)"
+                    android:textAppearance="?attr/textAppearanceSubtitle1"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textStyle="bold"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="8dp"/>
+
+                <!-- Daftar Jawaban (RecyclerView) -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_answers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_answer"
+                tools:itemCount="3"
+                android:paddingHorizontal="8dp" />
+
+                <!-- Empty State untuk Jawaban -->
+                <LinearLayout
+                    android:id="@+id/empty_answers_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="32dp"
+                    android:visibility="gone"> <!-- Diatur dari kode -->
+
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ic_launcher_foreground"
+                    app:tint="@color/gray" /> <!-- ganti icon -->
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="No Answers Yet"
+                        android:textAppearance="?attr/textAppearanceSubtitle1"
+                        android:textColor="?attr/colorOnSurfaceVariant"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Be the first one to help!"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="?attr/colorOnSurfaceVariant"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- Tombol Aksi Mengambang (Floating Action Button) untuk Menjawab -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_answer_question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_forum"
+        app:tint="@color/white"
+        android:contentDescription="Answer this question" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
+

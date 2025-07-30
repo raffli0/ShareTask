@@ -1,29 +1,55 @@
 package com.example.sharetask.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.sharetask.data.model.AuthResult
+import com.example.sharetask.data.model.User
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class AuthViewModel(app: Application) : AndroidViewModel(app) {
 
     private val auth = FirebaseAuth.getInstance()
+    private val firestore = FirebaseFirestore.getInstance()
 
     val name = MutableLiveData("")
     val email = MutableLiveData("")
     val password = MutableLiveData("")
 
     private val _authResult = MutableStateFlow<AuthResult?>(null)
-//    private val _clearInput = MutableLiveData<Boolean>()
-//    val clearInput: LiveData<Boolean> = _clearInput
     val authResult: StateFlow<AuthResult?> = _authResult
+
+    private fun saveUserToFirestore(user: FirebaseUser, name: String, isGoogleSignIn: Boolean) {
+        val userDoc = User(
+            uid = user.uid,
+            name = name,
+            email = user.email ?: "",
+            profilePic = user.photoUrl?.toString(),
+            role = "Beginner",
+            rewardPoints = 0,
+            followingCount = 0,
+            followersCount = 0
+        )
+
+        firestore.collection("users").document(user.uid)
+            .set(userDoc)
+            .addOnSuccessListener {
+                Log.d("AuthViewModel", "User profile saved to Firestore.")
+            }
+            .addOnFailureListener { e ->
+                Log.e("AuthViewModel", "Failed to save user: ${e.message}")
+            }
+    }
+
 
     fun registerWithEmail() {
         _authResult.value = AuthResult.Loading
@@ -48,12 +74,12 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
             .addOnCompleteListener() { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-
                     val profileUpdates = UserProfileChangeRequest.Builder()
                         .setDisplayName(nameValue)
                         .build()
                     user?.updateProfile(profileUpdates)?.addOnCompleteListener { profileUpdateTask ->
-                        if (profileUpdateTask.isSuccessful) {
+                        if (profileUpdateTask.isSuccessful && user != null) {
+                            saveUserToFirestore(user, nameValue, false)
                             _authResult.value = AuthResult.Success("Registrasi berhasil, silahkan login.", isNewUser = true, isGoogleSignIn = false)
                         }
                     }
@@ -106,11 +132,11 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
                     if (user != null) {
                         val isNewUser = task.result?.additionalUserInfo?.isNewUser ?: false
 
-                        if (isNewUser) {
+                        if (isNewUser && user != null) {
                             // Pengguna baru, akun Google baru saja dibuat di Firebase
                             val displayName = googleSignInAccount.displayName ?: "Pengguna Baru"
                             val email = googleSignInAccount.email
-                            // saveUserDetails(user.uid, displayName, email) // Simpan detail jika perlu
+                            saveUserToFirestore(user, displayName, true)
                             _authResult.value = AuthResult.Success(
                                 message = "Pendaftaran dengan Google berhasil! Akun Anda telah dibuat.",
                                 isNewUser = true,
@@ -137,7 +163,6 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
                 }
             }
     }
-
 
     fun resetAuthResult() {
         _authResult.value = null

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="8dp"
+    app:cardElevation="1dp"
+    app:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Informasi Penjawab -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_answerer_avatar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/avatar"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_answerer_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                tools:text="Alex Johnson"
+                android:textAppearance="?attr/textAppearanceSubtitle2"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/iv_answerer_avatar"
+                app:layout_constraintTop_toTopOf="@+id/iv_answerer_avatar"
+                app:layout_constraintEnd_toStartOf="@+id/tv_answer_time"/>
+
+            <TextView
+                android:id="@+id/tv_answer_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1 hour ago"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_answerer_name"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_answerer_name"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Isi Jawaban -->
+        <TextView
+            android:id="@+id/tv_answer_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="You can achieve this by overriding getItemViewType() in your RecyclerView.Adapter and then creating different ViewHolder types in onCreateViewHolder(). Make sure to return the correct layout resource for each view type."
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:lineSpacingMultiplier="1.2"/>
+
+        <!-- Aksi untuk Jawaban (Opsional: Upvote, Reply) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:gravity="end">
+
+            <!-- Contoh tombol aksi, bisa berupa ImageButton atau Button dengan style TextButton -->
+            <ImageButton
+                android:id="@+id/btn_upvote_answer"
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_upload"
+                android:contentDescription="Upvote" /> <!-- ubah ke ic thumbsup -->
+
+            <TextView
+                android:id="@+id/tv_answer_votes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="12"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="16dp"/>
+
+            <ImageButton
+                android:id="@+id/btn_reply_to_answer"
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_forum"
+                android:contentDescription="Reply to answer" /> <!-- ubah ke ic reply -->
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
+

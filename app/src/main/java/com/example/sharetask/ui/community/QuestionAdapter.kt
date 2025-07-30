@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit
 
 class QuestionAdapter : ListAdapter<Task, QuestionAdapter.QuestionViewHolder>(DIFF_CALLBACK) {
 
+    var onItemClick: ((Task) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionViewHolder {
         val binding = ItemQuestionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return QuestionViewHolder(binding)
@@ -21,10 +23,10 @@ class QuestionAdapter : ListAdapter<Task, QuestionAdapter.QuestionViewHolder>(DI
         holder.bind(getItem(position))
     }
 
-    class QuestionViewHolder(private val binding: ItemQuestionBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class QuestionViewHolder(private val binding: ItemQuestionBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(task: Task) {
             binding.task = task
-            
+
             // Load user photo
             Glide.with(binding.root)
                 .load(task.uploadedByPhotoUrl)
@@ -34,15 +36,18 @@ class QuestionAdapter : ListAdapter<Task, QuestionAdapter.QuestionViewHolder>(DI
             // Set time ago
             binding.tvTime.text = getTimeAgo(task.timestamp)
 
+            binding.root.setOnClickListener {
+                onItemClick?.invoke(task)
+            }
+
             binding.executePendingBindings()
         }
 
         private fun getTimeAgo(timestamp: Long): String {
             val now = System.currentTimeMillis()
             val diff = now - timestamp
-
             return when {
-                diff < TimeUnit.MINUTES.toMillis(1) -> "• Baru saja"
+                diff < TimeUnit.MINUTES.toMillis(1) -> "• recently"
                 diff < TimeUnit.HOURS.toMillis(1) -> {
                     val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
                     "• $minutes minute ago"

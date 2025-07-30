@@ -43,7 +43,7 @@ class CommunityFragment : Fragment() {
 
             // Ask Question Button
             btnAskQuestion.setOnClickListener {
-//                findNavController().navigate(R.id.action_communityFragment_to_uploadFragment)
+//                findNavController().navigate(R.id.fragment_detail_question)
             }
         }
     }
