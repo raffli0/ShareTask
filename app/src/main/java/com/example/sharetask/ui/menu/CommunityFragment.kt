@@ -1,4 +1,4 @@
-package com.example.sharetask.ui.community
+package com.example.sharetask.ui.menu
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.sharetask.R
 import com.example.sharetask.databinding.FragmentCommunityBinding
+import com.example.sharetask.adapter.QuestionAdapter
 import com.example.sharetask.viewmodel.CommunityViewModel
 
 class CommunityFragment : Fragment() {
@@ -16,7 +17,12 @@ class CommunityFragment : Fragment() {
     private var _binding: FragmentCommunityBinding? = null
     private val binding get() = _binding!!
     private val viewModel: CommunityViewModel by viewModels()
-    private val questionAdapter = QuestionAdapter()
+    private val questionAdapter = QuestionAdapter { question ->
+        val bundle = Bundle().apply {
+            putString("questionId", question.id)
+        }
+        findNavController().navigate(R.id.fragment_detail_question, bundle)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,7 +49,7 @@ class CommunityFragment : Fragment() {
 
             // Ask Question Button
             btnAskQuestion.setOnClickListener {
-//                findNavController().navigate(R.id.fragment_detail_question)
+//                findNavController().navigate(R.id.fragment_upload)
             }
         }
     }
@@ -60,6 +66,7 @@ class CommunityFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.rvQuestions.adapter = null
         _binding = null
     }
 } 

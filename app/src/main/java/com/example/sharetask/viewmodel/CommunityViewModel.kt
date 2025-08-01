@@ -4,15 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.sharetask.data.model.Task
+import com.example.sharetask.data.model.Question
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class CommunityViewModel : ViewModel() {
-    private val _questions = MutableLiveData<List<Task>>()
-    val questions: LiveData<List<Task>> = _questions
+    private val _questions = MutableLiveData<List<Question>>()
+    val questions: LiveData<List<Question>> = _questions
 
     private val firestore = FirebaseFirestore.getInstance()
 
@@ -28,10 +28,10 @@ class CommunityViewModel : ViewModel() {
                     .get()
                     .await()
 
-                val tasks = snapshot.documents.mapNotNull { doc ->
-                    doc.toObject(Task::class.java)
+                val questions = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(Question::class.java)
                 }
-                _questions.value = tasks
+                _questions.value = questions
             } catch (e: Exception) {
                 // Handle error
             }

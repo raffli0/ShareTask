@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="task"
-            type="com.example.sharetask.data.model.Task" />
+            name="question"
+            type="com.example.sharetask.data.model.Question" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="@{task.subjectName}"
+                android:text="@{question.subjectName}"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textSize="14sp"
@@ -62,7 +62,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@{task.description}"
+                android:text="@{question.description}"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 android:maxLines="3"

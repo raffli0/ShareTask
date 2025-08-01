@@ -6,16 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.sharetask.R
 import com.example.sharetask.adapter.FriendAdapter
 import com.example.sharetask.data.model.Subject
 import com.example.sharetask.databinding.FragmentHomeBinding
-import com.example.sharetask.ui.community.CommunityFragment
-import com.example.sharetask.ui.community.QuestionAdapter
+import com.example.sharetask.ui.menu.CommunityFragment
+import com.example.sharetask.adapter.QuestionAdapter
 import com.example.sharetask.ui.menu.UploadFragment
 import com.example.sharetask.viewmodel.HomeViewModel
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment() {
@@ -23,8 +23,13 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
-    private val questionAdapter = QuestionAdapter()
     private var selectedSubject: Subject? = null
+    private val questionAdapter = QuestionAdapter { question ->
+        val bundle = Bundle().apply {
+            putString("questionId", question.id)
+        }
+        findNavController().navigate(R.id.fragment_detail_question, bundle)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

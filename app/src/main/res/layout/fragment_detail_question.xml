@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <!-- ViewModel untuk DetailQuestionViewModel -->
-        <!-- <variable name="viewModel" type="com.example.yourapp.viewmodel.DetailQuestionViewModel" /> -->
+         <variable name="viewModel" type="com.example.sharetask.viewmodel.DetailQuestionViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -25,8 +24,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:navigationIcon="@drawable/arrow_back"
-            app:title="Answer"
-            app:titleTextColor="?attr/colorOnSurface" />
+                app:title="Answer"
+                app:titleTextColor="?attr/colorOnSurface" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -162,10 +161,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_answer"
-                tools:itemCount="3"
-                android:paddingHorizontal="8dp" />
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_answer"
+                    tools:itemCount="3"
+                    android:paddingHorizontal="8dp" />
 
                 <!-- Empty State untuk Jawaban -->
                 <LinearLayout
@@ -181,7 +180,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:src="@drawable/ic_launcher_foreground"
-                    app:tint="@color/gray" /> <!-- ganti icon -->
+                        app:tint="@color/gray" /> <!-- ganti icon -->
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -211,8 +210,8 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:src="@drawable/ic_forum"
-        app:tint="@color/white"
-        android:contentDescription="Answer this question" />
+            app:tint="@color/white"
+            android:contentDescription="Answer this question" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

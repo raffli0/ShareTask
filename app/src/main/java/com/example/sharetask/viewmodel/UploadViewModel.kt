@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sharetask.data.model.Subject
-import com.example.sharetask.data.model.Task
+import com.example.sharetask.data.model.Question
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -43,7 +43,7 @@ class UploadViewModel : ViewModel() {
                 }
 
                 // Create task document
-                val task = Task(
+                val question = Question(
                     id = UUID.randomUUID().toString(),
                     description = description,
                     uploadedBy = user.displayName ?: "Anonymous",
@@ -57,8 +57,8 @@ class UploadViewModel : ViewModel() {
 
                 // Save to Firestore
                 firestore.collection("tasks")
-                    .document(task.id)
-                    .set(task)
+                    .document(question.id)
+                    .set(question)
                     .await()
 
                 _uploadState.value = UploadState.Success("Question posted successfully")

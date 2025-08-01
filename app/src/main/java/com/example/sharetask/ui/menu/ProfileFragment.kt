@@ -2,22 +2,26 @@ package com.example.sharetask.ui.menu
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.sharetask.R
 import com.example.sharetask.adapter.LatestViewAdapter
 import com.example.sharetask.databinding.FragmentProfileBinding
 import com.example.sharetask.ui.auth.LoginActivity
+import com.example.sharetask.viewmodel.AuthViewModel
 import com.example.sharetask.viewmodel.ProfileViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
@@ -51,7 +55,6 @@ class ProfileFragment : Fragment() {
             .apply(requestOptions)
             .into(binding.ivProfilePicture)
 
-
         binding.ivSettings.setOnClickListener {
             binding.btnLogout.visibility = if (binding.btnLogout.visibility == View.VISIBLE) {
                 View.GONE
@@ -61,32 +64,38 @@ class ProfileFragment : Fragment() {
         }
 
         binding.btnLogout.setOnClickListener {
-            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id)) // Gunakan ID yang sama
-                .requestEmail()
-                .build()
-            val googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
-
-            googleSignInClient.signOut().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Logout berhasil.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    // Logout Google berhasil
-                    // Sekarang arahkan pengguna kembali ke LoginActivity
-                    val intent = Intent(requireActivity(), LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    requireActivity().finish() // Tutup Activity saat ini (misalnya MainActivity)
-                } else {
-                    // Handle error gagal logout
-                }
-            }
+            performLogout()
         }
 
         binding.rvLatestView.adapter = LatestViewAdapter(getSampleLatestView())
+    }
+
+    private fun performLogout() {
+        // Sign out dari Google terlebih dahulu
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        val googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
+
+        googleSignInClient.signOut().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                // Setelah Google sign out berhasil, logout dari AuthViewModel
+                Toast.makeText(
+                    requireContext(),
+                    "Logout berhasil.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                
+                // Navigasi ke LoginActivity
+                val intent = Intent(requireActivity(), LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                requireActivity().finish()
+            } else {
+
+            }
+        }
     }
 
     private fun getSampleLatestView(): List<String> {
