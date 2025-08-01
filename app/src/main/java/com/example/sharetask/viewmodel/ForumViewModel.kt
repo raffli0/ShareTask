@@ -10,7 +10,7 @@ import com.google.firebase.firestore.Query
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class CommunityViewModel : ViewModel() {
+class ForumViewModel : ViewModel() {
     private val _questions = MutableLiveData<List<Question>>()
     val questions: LiveData<List<Question>> = _questions
 

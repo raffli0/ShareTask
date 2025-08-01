@@ -11,17 +11,17 @@
         android:label="Home"
         tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_communityFragment_to_questionDetailFragment"
+            android:id="@+id/action_forumFragment_to_questionDetailFragment"
             app:destination="@id/fragment_detail_question" />
     </fragment>
 
     <fragment
         android:id="@+id/menu_forum"
-        android:name="com.example.sharetask.ui.menu.CommunityFragment"
+        android:name="com.example.sharetask.ui.menu.ForumFragment"
         android:label="Forum"
-        tools:layout="@layout/fragment_community">
+        tools:layout="@layout/fragment_forum">
         <action
-            android:id="@+id/action_communityFragment_to_questionDetailFragment"
+            android:id="@+id/action_forumFragment_to_questionDetailFragment"
             app:destination="@id/fragment_detail_question" />
     </fragment>
 

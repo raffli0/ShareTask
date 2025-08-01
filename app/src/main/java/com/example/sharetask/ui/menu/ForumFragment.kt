@@ -8,15 +8,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.sharetask.R
-import com.example.sharetask.databinding.FragmentCommunityBinding
+import com.example.sharetask.databinding.FragmentForumBinding
 import com.example.sharetask.adapter.QuestionAdapter
-import com.example.sharetask.viewmodel.CommunityViewModel
+import com.example.sharetask.viewmodel.ForumViewModel
 
-class CommunityFragment : Fragment() {
+class ForumFragment : Fragment() {
 
-    private var _binding: FragmentCommunityBinding? = null
+    private var _binding: FragmentForumBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: CommunityViewModel by viewModels()
+    private val viewModel: ForumViewModel by viewModels()
     private val questionAdapter = QuestionAdapter { question ->
         val bundle = Bundle().apply {
             putString("questionId", question.id)
@@ -29,7 +29,7 @@ class CommunityFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentCommunityBinding.inflate(inflater, container, false).apply {
+        _binding = FragmentForumBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = viewLifecycleOwner
             vm = viewModel
         }

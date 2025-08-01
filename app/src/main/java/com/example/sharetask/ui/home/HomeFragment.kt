@@ -11,7 +11,7 @@ import com.example.sharetask.R
 import com.example.sharetask.adapter.FriendAdapter
 import com.example.sharetask.data.model.Subject
 import com.example.sharetask.databinding.FragmentHomeBinding
-import com.example.sharetask.ui.menu.CommunityFragment
+import com.example.sharetask.ui.menu.ForumFragment
 import com.example.sharetask.adapter.QuestionAdapter
 import com.example.sharetask.ui.menu.UploadFragment
 import com.example.sharetask.viewmodel.HomeViewModel
@@ -74,7 +74,7 @@ class HomeFragment : Fragment() {
 
             // View All button
             tvViewAll.setOnClickListener {
-                val fragment = CommunityFragment()
+                val fragment = ForumFragment()
                 requireActivity()
                     .supportFragmentManager
                     .beginTransaction()

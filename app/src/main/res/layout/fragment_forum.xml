@@ -6,7 +6,7 @@
     <data>
         <variable
             name="vm"
-            type="com.example.sharetask.viewmodel.CommunityViewModel" />
+            type="com.example.sharetask.viewmodel.ForumViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
