@@ -18,6 +18,7 @@ import com.example.sharetask.viewmodel.ProfileViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class ProfileFragment : Fragment() {
 
@@ -39,17 +40,11 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val user = FirebaseAuth.getInstance().currentUser
-        binding.tvUserName.text = user?.displayName ?: "User"
+        loadUserData()
 
         val requestOptions = RequestOptions()
             .placeholder(R.drawable.ic_profile) //load photo profile from drawable
             .error(R.drawable.ic_profile)
-
-        Glide.with(this)
-            .load(user?.photoUrl) // load photo profile from google
-            .apply(requestOptions)
-            .into(binding.ivProfilePicture)
 
         binding.ivSettings.setOnClickListener {
             binding.btnLogout.visibility = if (binding.btnLogout.visibility == View.VISIBLE) {
@@ -61,6 +56,16 @@ class ProfileFragment : Fragment() {
 
         binding.btnLogout.setOnClickListener {
             performLogout()
+        }
+
+        binding.btnEditProfile.setOnClickListener {
+            val fragment = EditProfileFragment()
+            requireActivity()
+                .supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack("profile_fragment")
+                .commit()
         }
 
         binding.rvLatestView.adapter = LatestViewAdapter(getSampleLatestView())
@@ -104,6 +109,35 @@ class ProfileFragment : Fragment() {
     }
 
     fun refreshData() {
+        loadUserData()
         binding.rvLatestView.adapter = LatestViewAdapter(getSampleLatestView())
+    }
+    
+    private fun loadUserData() {
+        // Ambil data dari Firestore untuk memastikan data terbaru
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserId != null) {
+            FirebaseFirestore.getInstance().collection("users").document(currentUserId)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        // Update UI dengan data terbaru dari Firestore
+                        val name = document.getString("name")
+                        val profilePicUrl = document.getString("profilePic")
+                        
+                        binding.tvUserName.text = name ?: "User"
+                        
+                        Glide.with(this)
+                            .load(profilePicUrl)
+                            .apply(RequestOptions()
+                                .placeholder(R.drawable.ic_profile)
+                                .error(R.drawable.ic_profile))
+                            .into(binding.ivProfilePicture)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "Failed to load profile: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 }

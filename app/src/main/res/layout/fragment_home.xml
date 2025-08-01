@@ -107,7 +107,7 @@
                 android:elevation="8dp"
                 android:translationY="-40dp"
                 android:translationX="23dp"
-                android:src="@drawable/bannerrr"
+                android:src="@drawable/banner1"
                 app:layout_constraintEnd_toEndOf="@+id/card_play_quiz"
                 app:layout_constraintTop_toTopOf="@+id/card_play_quiz" />
 
@@ -197,29 +197,82 @@
                 app:layout_constraintBottom_toBottomOf="@+id/tv_friendlist_title"
                 android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/tv_add_friend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="Add Friend"
-                android:textColor="@color/blue"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_friendlist_title"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_friendlist_title" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_friendlist"
+            <!-- Container untuk Empty State atau RecyclerView -->
+            <FrameLayout
+                android:id="@+id/friend_list_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:clipToPadding="false"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="12dp"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_friendlist_title"
-                tools:listitem="@layout/item_friend" />
+                android:animateLayoutChanges="true"> <!-- Opsional: untuk animasi transisi visibilitas -->
+
+                <!-- Empty State Layout (Termasuk Tombol Add Friends) -->
+                <LinearLayout
+                    android:id="@+id/empty_friend_list_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp"
+                    android:background="@drawable/bg_empty_state_rounded"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:visibility="gone"> <!-- Awalnya gone, akan di-visible jika teman kosong -->
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_info"
+                        app:tint="@color/gray_medium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="No Friends Yet"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Connect with friends to see their activity here."
+                        android:textColor="@color/gray"
+                        android:textAlignment="center"
+                        android:textSize="14sp"/>
+
+                    <Button
+                        android:id="@+id/btn_add_friend_empty_state"
+                        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Add Friends"
+                        android:textAllCaps="false"
+                        app:icon="@drawable/outline_add"
+                        app:iconTint="@color/blue"
+                        android:textColor="@color/blue"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+
+                <!-- RecyclerView untuk Friendlist -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_friendlist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:clipToPadding="false"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_friend"
+                    android:visibility="visible"/> <!-- Awalnya visible, akan di-gone jika empty -->
+
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/tv_discovery_title"
@@ -232,7 +285,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rv_friendlist" />
+                app:layout_constraintTop_toBottomOf="@+id/friend_list_container" />
 
             <TextView
                 android:id="@+id/tv_view_all"

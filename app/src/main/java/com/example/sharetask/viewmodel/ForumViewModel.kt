@@ -1,5 +1,6 @@
 package com.example.sharetask.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,17 +17,18 @@ class ForumViewModel : ViewModel() {
 
     private val firestore = FirebaseFirestore.getInstance()
 
-    init {
-        loadQuestions()
-    }
 
     fun loadQuestions() {
         viewModelScope.launch {
             try {
-                val snapshot = firestore.collection("tasks")
+                val start = System.currentTimeMillis()
+                val snapshot = firestore.collection("question")
                     .orderBy("timestamp", Query.Direction.DESCENDING)
+//                    .limit(20)
                     .get()
                     .await()
+
+                Log.d("ForumPerf", "Fetch took ${System.currentTimeMillis() - start}ms")
 
                 val questions = snapshot.documents.mapNotNull { doc ->
                     doc.toObject(Question::class.java)
@@ -37,4 +39,6 @@ class ForumViewModel : ViewModel() {
             }
         }
     }
+
+
 } 

@@ -65,15 +65,26 @@ class MainActivity : AppCompatActivity() {
         if (fragment::class == activeFragment?.javaClass) return
 
         // Atur animasi transisi
-        supportFragmentManager.beginTransaction()
-            .setCustomAnimations(
-                R.anim.slide_in_right,    // fragment baru masuk dari kanan
-                R.anim.slide_out_left,    // fragment lama keluar ke kiri
-                R.anim.slide_in_left,     // fragment masuk saat kembali (backstack)
-                R.anim.slide_out_right    // fragment keluar saat kembali
-            )
-            .replace(R.id.fragment_container, fragment) // Ganti fragment container
-            .addToBackStack(null) // Tambahkan ke backstack
+        val transaction = supportFragmentManager.beginTransaction()
+//            .setCustomAnimations(
+//                R.anim.slide_in_right,    // fragment baru masuk dari kanan
+//                R.anim.slide_out_left,    // fragment lama keluar ke kiri
+//                R.anim.slide_in_left,     // fragment masuk saat kembali (backstack)
+//                R.anim.slide_out_right    // fragment keluar saat kembali
+//            )
+        
+        // Tambahkan tag ke fragment untuk memudahkan pencarian nanti
+        val tag = when (fragment) {
+            is HomeFragment -> "home_fragment"
+            is ForumFragment -> "forum_fragment"
+            is UploadFragment -> "upload_fragment"
+            is NotificationFragment -> "notification_fragment"
+            is ProfileFragment -> "profile_fragment"
+            else -> fragment.javaClass.simpleName
+        }
+        
+        transaction.replace(R.id.fragment_container, fragment, tag) // Ganti fragment container dengan tag
+            .addToBackStack(tag) // Tambahkan ke backstack dengan tag
             .commit()
 
         activeFragment = fragment  // Update fragment aktif

@@ -56,7 +56,7 @@ class UploadViewModel : ViewModel() {
                 )
 
                 // Save to Firestore
-                firestore.collection("tasks")
+                firestore.collection("question")
                     .document(question.id)
                     .set(question)
                     .await()

@@ -55,9 +55,14 @@ class ForumFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+//        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+//            shimerView.visibility = if (isLoading) View.VISIBLE else View.GONE
+//            rvQuestions.visibility = if (isLoading) View.GONE else View.VISIBLE
+//        }
         viewModel.questions.observe(viewLifecycleOwner) { questions ->
             questionAdapter.submitList(questions)
         }
+        viewModel.loadQuestions()
     }
 
     fun refreshData() {

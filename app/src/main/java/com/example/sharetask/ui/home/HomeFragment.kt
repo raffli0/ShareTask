@@ -13,6 +13,7 @@ import com.example.sharetask.data.model.Subject
 import com.example.sharetask.databinding.FragmentHomeBinding
 import com.example.sharetask.ui.menu.ForumFragment
 import com.example.sharetask.adapter.QuestionAdapter
+import com.example.sharetask.ui.menu.DetailQuestionFragment
 import com.example.sharetask.ui.menu.UploadFragment
 import com.example.sharetask.viewmodel.HomeViewModel
 import com.google.android.material.chip.Chip
@@ -24,6 +25,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
     private var selectedSubject: Subject? = null
+    private val friendAdapter = FriendAdapter(emptyList())
     private val questionAdapter = QuestionAdapter { question ->
         val bundle = Bundle().apply {
             putString("questionId", question.id)
@@ -48,15 +50,18 @@ class HomeFragment : Fragment() {
         val user = FirebaseAuth.getInstance().currentUser
         viewModel.setUserName(user?.displayName ?: "User")
 
+        val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        viewModel.loadFriendList(currentUid)
+
         setupViews()
         observeViewModel()
     }
 
     private fun setupViews() {
         with(binding) {
-            viewModel.loadTasks() // Load tasks when fragment is created
+            viewModel.loadQuestion() // Load question when fragment is created
             rvDiscovery.adapter = questionAdapter
-            rvFriendlist.adapter = FriendAdapter(getSampleFriends())
+            rvFriendlist.adapter = FriendAdapter(emptyList())
 
             // Setup Categories
             setupCategories()
@@ -82,6 +87,14 @@ class HomeFragment : Fragment() {
                     .addToBackStack(null)
                     .commit()
             }
+
+            btnAddFriendEmptyState.setOnClickListener {
+                // Navigasi ke halaman Add Friend atau buka dialog/bottom sheet untuk menambah teman
+                // Contoh: findNavController().navigate(R.id.action_homeFragment_to_addFriendFragment)
+            }
+            btnAddFriendHeader.setOnClickListener {
+
+            }
         }
     }
 
@@ -95,7 +108,7 @@ class HomeFragment : Fragment() {
                 if (checkedIds.isEmpty()) {
                     // No chip selected, show all items
                     selectedSubject = null
-                    viewModel.filterTasksBySubject("")
+                    viewModel.filterQuestionBySubject("")
                 }
             }
         }
@@ -114,11 +127,11 @@ class HomeFragment : Fragment() {
                 setOnCheckedChangeListener { buttonView, isChecked ->
                     if (isChecked) {
                         selectedSubject = subject
-                        viewModel.filterTasksBySubject(subject.id)
+                        viewModel.filterQuestionBySubject(subject.id)
                     } else if (binding.chipGroupCategory.checkedChipIds.isEmpty()) {
                         // If this was the last checked chip, show all items
                         selectedSubject = null
-                        viewModel.filterTasksBySubject("")
+                        viewModel.filterQuestionBySubject("")
                     }
                 }
             }
@@ -141,15 +154,29 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        // Observe tasks and limit to 5 items
-        viewModel.tasks.observe(viewLifecycleOwner) { tasks ->
+        // Observe question and limit to 5 items
+        viewModel.question.observe(viewLifecycleOwner) { question ->
             // Submit the first 5 tasks to the adapter
-            questionAdapter.submitList(tasks.take(5))
+            questionAdapter.submitList(question.take(5))
+        }
+
+        // Observe friend list and update UI accordingly
+        viewModel.friendList.observe(viewLifecycleOwner) { friends ->
+            if (friends.isNullOrEmpty()) {
+                binding.rvFriendlist.visibility = View.GONE
+                binding.emptyFriendListLayout.visibility = View.VISIBLE
+                binding.btnAddFriendHeader.visibility = View.GONE // Sembunyikan juga tombol "+" di header
+            } else {
+                binding.rvFriendlist.visibility = View.VISIBLE
+                binding.emptyFriendListLayout.visibility = View.GONE
+                binding.btnAddFriendHeader.visibility = View.VISIBLE // Tampilkan tombol "+" di header
+                friendAdapter.itemCount
+            }
         }
     }
 
     fun refreshData() {
-        viewModel.loadTasks()
+        viewModel.loadQuestion()
     }
 
     override fun onDestroyView() {

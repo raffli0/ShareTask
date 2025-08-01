@@ -49,8 +49,6 @@ class QuestionAdapter(private val onItemClicked: (Question) -> Unit
             binding.executePendingBindings()
         }
 
-
-
         private fun getTimeAgo(timestamp: Long): String {
             val now = System.currentTimeMillis()
             val diff = now - timestamp
