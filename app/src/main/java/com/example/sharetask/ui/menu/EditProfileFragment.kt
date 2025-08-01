@@ -18,6 +18,9 @@ import com.example.sharetask.databinding.FragmentEditProfileBinding
 import com.google.android.material.snackbar.Snackbar
 import android.content.Intent // Pastikan import Intent
 import com.example.sharetask.ui.main.MainActivity
+import android.util.Log
+import android.os.Handler
+import android.os.Looper
 
 class EditProfileFragment : Fragment() {
 
@@ -127,13 +130,21 @@ class EditProfileFragment : Fragment() {
             when (status) {
                 is EditProfileViewModel.UpdateStatus.Success -> {
                     Toast.makeText(context, "Profile updated successfully!", Toast.LENGTH_SHORT).show()
-                    // Gunakan onBackPressed sebagai alternatif jika findNavController().navigateUp() tidak berfungsi
-                    requireActivity().onBackPressed()
                     
-                    // Refresh ProfileFragment saat kembali
-                    val mainActivity = requireActivity()
-                    if (mainActivity is MainActivity) {
-                        mainActivity.refreshActiveFragment()
+                    // Gunakan popBackStack untuk kembali ke fragment sebelumnya terlebih dahulu
+                    requireActivity().supportFragmentManager.popBackStack()
+                    
+                    // Refresh ProfileFragment setelah kembali
+                    try {
+                        val mainActivity = requireActivity()
+                        if (mainActivity is MainActivity && isAdded && !isDetached()) {
+                            // Berikan sedikit delay untuk memastikan fragment sudah kembali
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                mainActivity.refreshActiveFragment()
+                            }, 100)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("EditProfileFragment", "Error refreshing fragment: ${e.message}")
                     }
                 }
                 is EditProfileViewModel.UpdateStatus.Error -> {

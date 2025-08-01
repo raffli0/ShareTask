@@ -18,6 +18,7 @@ import com.example.sharetask.ui.menu.UploadFragment
 import com.example.sharetask.viewmodel.HomeViewModel
 import com.google.android.material.chip.Chip
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class HomeFragment : Fragment() {
 
@@ -30,7 +31,15 @@ class HomeFragment : Fragment() {
         val bundle = Bundle().apply {
             putString("questionId", question.id)
         }
-        findNavController().navigate(R.id.fragment_detail_question, bundle)
+        // Gunakan FragmentManager langsung karena MainActivity tidak menggunakan NavHost
+        val fragment = DetailQuestionFragment().apply {
+            arguments = bundle
+        }
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, fragment, "detail_question_fragment")
+            .addToBackStack("detail_question_fragment")
+            .commit()
     }
 
     override fun onCreateView(
@@ -55,6 +64,7 @@ class HomeFragment : Fragment() {
 
         setupViews()
         observeViewModel()
+        refreshData() // Load fresh data including user name from Firestore
     }
 
     private fun setupViews() {
@@ -69,22 +79,20 @@ class HomeFragment : Fragment() {
             // Share Now button
             btnShareNow.setOnClickListener {
                 val fragment = UploadFragment()
-                requireActivity()
-                    .supportFragmentManager
+                requireActivity().supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
+                    .replace(R.id.fragment_container, fragment, "upload_fragment")
+                    .addToBackStack("upload_fragment")
                     .commit()
             }
 
             // View All button
             tvViewAll.setOnClickListener {
                 val fragment = ForumFragment()
-                requireActivity()
-                    .supportFragmentManager
+                requireActivity().supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
+                    .replace(R.id.fragment_container, fragment, "forum_fragment")
+                    .addToBackStack("forum_fragment")
                     .commit()
             }
 
@@ -177,6 +185,19 @@ class HomeFragment : Fragment() {
 
     fun refreshData() {
         viewModel.loadQuestion()
+        // Load user data from Firestore to update the name in UI
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            FirebaseFirestore.getInstance().collection("users")
+                .document(currentUser.uid)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val name = document.getString("name") ?: ""
+                        viewModel.setUserName(name)
+                    }
+                }
+        }
     }
 
     override fun onDestroyView() {

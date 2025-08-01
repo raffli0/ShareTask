@@ -21,7 +21,15 @@ class ForumFragment : Fragment() {
         val bundle = Bundle().apply {
             putString("questionId", question.id)
         }
-        findNavController().navigate(R.id.fragment_detail_question, bundle)
+        // Gunakan FragmentManager langsung karena MainActivity tidak menggunakan NavHost
+        val fragment = DetailQuestionFragment().apply {
+            arguments = bundle
+        }
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, fragment, "detail_question_fragment")
+            .addToBackStack("detail_question_fragment")
+            .commit()
     }
 
     override fun onCreateView(
@@ -74,4 +82,4 @@ class ForumFragment : Fragment() {
         binding.rvQuestions.adapter = null
         _binding = null
     }
-} 
+}

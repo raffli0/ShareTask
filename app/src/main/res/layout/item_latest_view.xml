@@ -1,9 +1,11 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="16dp">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -23,42 +25,53 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Dokumen Super Semar"
+            android:ellipsize="end"
+            android:maxLines="2"
+            tools:text="How to implement RecyclerView with multiple view types?"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/iv_view_thumbnail"
             app:layout_constraintTop_toTopOf="@+id/iv_view_thumbnail" />
 
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
+        <TextView
+            android:id="@+id/tv_doc_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:progress="75"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            tools:text="I'm trying to implement a RecyclerView that displays different types of items. How can I create multiple view types?"
+            android:textColor="@color/gray"
+            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@+id/tv_doc_title"
             app:layout_constraintStart_toStartOf="@+id/tv_doc_title"
             app:layout_constraintTop_toBottomOf="@+id/tv_doc_title" />
-
-        <TextView
-            android:id="@+id/tv_score"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="75/100"
-            app:layout_constraintEnd_toEndOf="@+id/progress_bar"
-            app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
 
         <Button
             android:id="@+id/btn_continue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Continue"
+            android:text="View"
+            android:textSize="12sp"
+            android:minHeight="36dp"
             android:backgroundTint="@color/blue"
-            app:layout_constraintStart_toStartOf="@+id/progress_bar"
-            app:layout_constraintTop_toBottomOf="@+id/tv_score" />
+            app:layout_constraintStart_toStartOf="@+id/tv_doc_description"
+            app:layout_constraintTop_toBottomOf="@+id/tv_doc_description" />
+            
+        <TextView
+            android:id="@+id/tv_viewed_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            tools:text="Viewed 5 min ago"
+            android:textColor="@color/gray"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_continue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btn_continue" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
