@@ -2,26 +2,22 @@ package com.example.sharetask.ui.menu
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.sharetask.R
 import com.example.sharetask.adapter.LatestViewAdapter
 import com.example.sharetask.databinding.FragmentProfileBinding
 import com.example.sharetask.ui.auth.LoginActivity
-import com.example.sharetask.viewmodel.AuthViewModel
 import com.example.sharetask.viewmodel.ProfileViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 

@@ -1,23 +1,18 @@
 package com.example.sharetask.ui.main
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.example.sharetask.R
 import com.example.sharetask.databinding.ActivityMainBinding
-import com.example.sharetask.ui.auth.LoginActivity
 import com.example.sharetask.ui.home.HomeFragment
 import com.example.sharetask.ui.menu.CommunityFragment
 import com.example.sharetask.ui.menu.DetailQuestionFragment
 import com.example.sharetask.ui.menu.NotificationFragment
 import com.example.sharetask.ui.menu.ProfileFragment
 import com.example.sharetask.ui.menu.UploadFragment
-import com.example.sharetask.viewmodel.AuthViewModel
-import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
 
