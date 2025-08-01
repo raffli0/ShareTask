@@ -6,10 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.example.sharetask.R
-import com.example.sharetask.adapter.FriendAdapter
 import com.example.sharetask.databinding.ActivityMainBinding
 import com.example.sharetask.ui.home.HomeFragment
-import com.example.sharetask.ui.community.CommunityFragment
+import com.example.sharetask.ui.menu.ForumFragment
+import com.example.sharetask.ui.menu.DetailQuestionFragment
 import com.example.sharetask.ui.menu.NotificationFragment
 import com.example.sharetask.ui.menu.ProfileFragment
 import com.example.sharetask.ui.menu.UploadFragment
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.selectedMenuId.observe(this, Observer { menuId ->
             val selectedFragment = when (menuId) {
                 R.id.menu_home -> HomeFragment()
-                R.id.menu_forum -> CommunityFragment()
+                R.id.menu_forum -> ForumFragment()
                 R.id.menu_upload -> UploadFragment()
                 R.id.menu_notification -> NotificationFragment()
                 R.id.menu_profile -> ProfileFragment()
@@ -83,10 +83,11 @@ class MainActivity : AppCompatActivity() {
         // Cek fragment aktif dan panggil metode refresh jika ada
         when (activeFragment) {
             is HomeFragment -> (activeFragment as HomeFragment).refreshData()
-            is CommunityFragment -> (activeFragment as CommunityFragment).refreshData()
+            is ForumFragment -> (activeFragment as ForumFragment).refreshData()
             is UploadFragment -> (activeFragment as UploadFragment).refreshData()
             is NotificationFragment -> (activeFragment as NotificationFragment).refreshData()
             is ProfileFragment -> (activeFragment as ProfileFragment).refreshData()
+            is DetailQuestionFragment -> (activeFragment as DetailQuestionFragment).refreshData()
         }
         binding.swipeRefresh.isRefreshing = false // Hentikan animasi refreshing
     }

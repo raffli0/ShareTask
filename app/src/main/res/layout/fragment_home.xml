@@ -69,7 +69,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
-                        android:text="Share task with your friends"
+                        android:text="Share question with your friends"
                         android:textColor="@color/white"
                         android:textSize="20sp"
                         android:textStyle="bold"

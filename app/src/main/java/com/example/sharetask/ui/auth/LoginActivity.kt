@@ -2,6 +2,7 @@ package com.example.sharetask.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -26,11 +27,20 @@ class LoginActivity : AppCompatActivity() {
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        if (task.isSuccessful) {
-            task.result?.let { viewModel.loginWithGoogle(it, true) }
+        if (result.resultCode == RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            if (task.isSuccessful) {
+                task.result?.let { account ->
+                    Log.d("LoginActivity", "Google Sign-In successful for: ${account.email}")
+                    task.result?.let { viewModel.loginWithGoogle(it, true) }
+                }
+            } else {
+                Log.e("LoginActivity", "Google Sign-In failed: ${task.exception?.message}")
+                Toast.makeText(this, "Google Sign-In gagal: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+            }
         } else {
-            // Handle jika user membatalkan login
+            Log.d("LoginActivity", "Google Sign-In cancelled by user")
+            Toast.makeText(this, "Google Sign-In dibatalkan", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -41,6 +51,9 @@ class LoginActivity : AppCompatActivity() {
 
         binding.lifecycleOwner = this
         binding.vm = viewModel
+
+        // Debug Google Services configuration
+        Log.d("LoginActivity", "Google Services Web Client ID: ${getString(R.string.default_web_client_id)}")
 
         // Inisialisasi GoogleSignInClient
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -90,6 +103,9 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun goToMain() {
+        // Debug Firebase Auth state setelah login
+        viewModel.debugFirebaseAuth()
+        
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)

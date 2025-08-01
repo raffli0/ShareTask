@@ -3,7 +3,6 @@ package com.example.sharetask.viewmodel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.sharetask.data.model.AuthResult
 import com.example.sharetask.data.model.User
@@ -29,6 +28,8 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
     val authResult: StateFlow<AuthResult?> = _authResult
 
     private fun saveUserToFirestore(user: FirebaseUser, name: String, isGoogleSignIn: Boolean) {
+        // Temporarily comment out Firestore save to test
+        Log.d("AuthViewModel", "Skipping Firestore save for testing")
         val userDoc = User(
             uid = user.uid,
             name = name,
@@ -48,9 +49,9 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
             .addOnFailureListener { e ->
                 Log.e("AuthViewModel", "Failed to save user: ${e.message}")
             }
+
     }
-
-
+    
     fun registerWithEmail() {
         _authResult.value = AuthResult.Loading
         val nameValue = name.value.orEmpty().trim()
@@ -123,14 +124,21 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
 
     fun loginWithGoogle(googleSignInAccount: GoogleSignInAccount, canRegisterNewUser: Boolean) {
         _authResult.value = AuthResult.Loading
+        
+        Log.d("AuthViewModel", "Starting Google Sign-In for: ${googleSignInAccount.email}")
+        
         val credential = GoogleAuthProvider.getCredential(googleSignInAccount.idToken, null)
 
         auth.signInWithCredential(credential)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
+                    Log.d("AuthViewModel", "Google Sign-In task successful")
+                    
                     if (user != null) {
                         val isNewUser = task.result?.additionalUserInfo?.isNewUser ?: false
+                        Log.d("AuthViewModel", "User obtained: ${user.email}")
+                        Log.d("AuthViewModel", "Is new user: $isNewUser")
 
                         if (isNewUser && user != null) {
                             // Pengguna baru, akun Google baru saja dibuat di Firebase
@@ -154,11 +162,24 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
                             // Anda ingin UI bereaksi sangat berbeda. Tapi untuk sekarang, Success dengan pesan
                             // yang jelas sudah cukup baik, dan pengguna akan diloginkan.
                         }
+                        
+                        // Pastikan session tersimpan dengan benar
+                        Log.d("AuthViewModel", "Google Sign-In successful. User ID: ${user.uid}")
+                        Log.d("AuthViewModel", "User email: ${user.email}")
+                        Log.d("AuthViewModel", "User display name: ${user.displayName}")
+                        
+                        // Verifikasi session tersimpan
+                        val currentUserAfterLogin = auth.currentUser
+                        Log.d("AuthViewModel", "Current user after login: ${currentUserAfterLogin?.email}")
+                        
                     } else {
+                        Log.e("AuthViewModel", "User is null after successful Google Sign-In")
                         _authResult.value = AuthResult.Error("Gagal mendapatkan informasi pengguna.")
                     }
                 } else {
                     // Gagal login/daftar dengan Google
+                    Log.e("AuthViewModel", "Google Sign-In failed: ${task.exception?.message}")
+                    Log.e("AuthViewModel", "Exception: ${task.exception}")
                     _authResult.value = AuthResult.Error("Autentikasi Google gagal: ${task.exception?.message}")
                 }
             }
@@ -168,5 +189,17 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
         _authResult.value = null
     }
 
-
+    // Debug method untuk cek Firebase configuration
+    fun debugFirebaseAuth() {
+        Log.d("AuthViewModel", "=== Firebase Auth Debug ===")
+        Log.d("AuthViewModel", "Auth instance: $auth")
+        Log.d("AuthViewModel", "Current user: ${auth.currentUser?.email}")
+        Log.d("AuthViewModel", "User ID: ${auth.currentUser?.uid}")
+        Log.d("AuthViewModel", "User display name: ${auth.currentUser?.displayName}")
+        Log.d("AuthViewModel", "User photo URL: ${auth.currentUser?.photoUrl}")
+        Log.d("AuthViewModel", "User is email verified: ${auth.currentUser?.isEmailVerified}")
+        Log.d("AuthViewModel", "User creation timestamp: ${auth.currentUser?.metadata?.creationTimestamp}")
+        Log.d("AuthViewModel", "User last sign in timestamp: ${auth.currentUser?.metadata?.lastSignInTimestamp}")
+        Log.d("AuthViewModel", "=== End Debug ===")
+    }
 }

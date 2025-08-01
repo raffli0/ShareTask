@@ -1,11 +1,11 @@
 package com.example.sharetask.data.repository
 import com.example.sharetask.data.model.Subject
-import com.example.sharetask.data.model.Task
+import com.example.sharetask.data.model.Question
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
-class TaskRepository {
+class QuestionRepository {
 
     private val db = Firebase.firestore
 
@@ -23,13 +23,13 @@ class TaskRepository {
     }
 
     // Mengambil semua tugas dari Firestore
-    suspend fun getTasks(): List<Task> {
+    suspend fun getTasks(): List<Question> {
         return try {
             db.collection("tasks")
                 // .orderBy("timestamp", Query.Direction.DESCENDING) // Contoh sorting
                 .get()
                 .await()
-                .toObjects(Task::class.java)
+                .toObjects(Question::class.java)
         } catch (e: Exception) {
             emptyList()
         }

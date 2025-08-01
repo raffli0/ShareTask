@@ -1,6 +1,6 @@
 package com.example.sharetask.data.model
 
-data class Task(
+data class Question(
     val id: String = "",
     val description: String = "",
     val uploadedBy: String = "",

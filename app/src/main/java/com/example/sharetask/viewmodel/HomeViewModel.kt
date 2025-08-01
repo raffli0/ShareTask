@@ -4,21 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.sharetask.data.model.Task
+import com.example.sharetask.data.model.Question
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class HomeViewModel : ViewModel() {
-    private val _tasks = MutableLiveData<List<Task>>()
-    val tasks: LiveData<List<Task>> = _tasks
+    private val _tasks = MutableLiveData<List<Question>>()
+    val tasks: LiveData<List<Question>> = _tasks
 
     private val _userName = MutableLiveData<String>()
     val userName: LiveData<String> = _userName
 
     private val firestore = FirebaseFirestore.getInstance()
-    private var allTasks: List<Task> = emptyList()
+    private var allQuestions: List<Question> = emptyList()
 
     init {
         loadTasks()
@@ -37,10 +37,10 @@ class HomeViewModel : ViewModel() {
                     .get()
                     .await()
 
-                allTasks = snapshot.documents.mapNotNull { doc ->
-                    doc.toObject(Task::class.java)
+                allQuestions = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(Question::class.java)
                 }
-                _tasks.value = allTasks
+                _tasks.value = allQuestions
             } catch (e: Exception) {
                 // Handle error
             }
@@ -49,9 +49,9 @@ class HomeViewModel : ViewModel() {
 
     fun filterTasksBySubject(subjectId: String) {
         if (subjectId.isEmpty()) {
-            _tasks.value = allTasks
+            _tasks.value = allQuestions
         } else {
-            _tasks.value = allTasks.filter { it.subjectId == subjectId }
+            _tasks.value = allQuestions.filter { it.subjectId == subjectId }
         }
     }
 }
