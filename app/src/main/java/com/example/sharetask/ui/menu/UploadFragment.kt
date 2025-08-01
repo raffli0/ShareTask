@@ -2,12 +2,14 @@ package com.example.sharetask.ui.menu
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.PopupMenu
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -93,11 +95,41 @@ class UploadFragment : Fragment() {
             popup.menu.add(0, index, index, subject.name)
         }
 
+        // Rotate dropdown icon when showing menu
+        val rotateAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_dropdown)
+        binding.categoryButton.startAnimation(rotateAnimation)
+        
+        // Change drawable to rotated version
+        binding.categoryButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_dropdown_rotated, 0)
+        // Ensure tint color is maintained
+        binding.categoryButton.compoundDrawables[2]?.setTint(resources.getColor(R.color.white, null))
+
         popup.setOnMenuItemClickListener { menuItem ->
             val subject = getSubjects()[menuItem.itemId]
             selectedSubject = subject
             binding.categoryButton.text = subject.name
+            
+            // Rotate back when menu item is selected
+            val rotateBackAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_dropdown_back)
+            binding.categoryButton.startAnimation(rotateBackAnimation)
+            
+            // Change drawable back to original
+            binding.categoryButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_dropdown, 0)
+            // Ensure tint color is maintained
+            binding.categoryButton.compoundDrawables[2]?.setTint(resources.getColor(R.color.white, null))
+            
             true
+        }
+
+        popup.setOnDismissListener {
+            // Rotate back when menu is dismissed without selection
+            val rotateBackAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_dropdown_back)
+            binding.categoryButton.startAnimation(rotateBackAnimation)
+            
+            // Change drawable back to original
+            binding.categoryButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_dropdown, 0)
+            // Ensure tint color is maintained
+            binding.categoryButton.compoundDrawables[2]?.setTint(resources.getColor(R.color.white, null))
         }
 
         popup.show()

@@ -18,31 +18,15 @@
             android:id="@+id/appbar_layout_notification"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorSurface"
-            app:elevation="4dp"> <!-- Memberi sedikit bayangan -->
+            app:elevation="4dp">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar_notification"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:background="@color/white"
                 app:title="Notifications"
                 app:titleTextColor="?attr/colorOnSurface" />
-            <!--
-                Jika Anda ingin menambahkan tombol "Mark all as read" di Toolbar:
-                <ImageButton
-                    android:id="@+id/btn_mark_all_read"
-                    android:layout_width="wrap_content"
-                    android:layout_height="?attr/actionBarSize"
-                    android:src="@drawable/ic_done_all"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:layout_gravity="end"
-                    android:paddingHorizontal="16dp"
-                    android:contentDescription="Mark all as read"
-                    app:tint="?attr/colorOnSurface"
-                    app:layout_anchor="@id/toolbar_notification"
-                    app:layout_anchorGravity="end|center_vertical" />
-            -->
-
         </com.google.android.material.appbar.AppBarLayout>
 
         <!-- Konten Utama: Daftar Notifikasi atau Empty State -->

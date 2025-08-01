@@ -37,8 +37,7 @@ class EditProfileFragment : Fragment() {
                     // Tampilkan pratinjau langsung
                     Glide.with(this)
                         .load(uri)
-                        .placeholder(R.drawable.ic_profile) // Ganti dengan placeholder Anda
-                        .error(R.drawable.avatar)     // Ganti dengan error placeholder Anda
+                        .placeholder(R.drawable.ic_profile)
                         .into(binding.ivEditProfilePicture)
                 }
             }
@@ -49,7 +48,7 @@ class EditProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner // Penting untuk LiveData dan DataBinding
+        binding.lifecycleOwner = viewLifecycleOwner // krusial untuk LiveData dan DataBinding
         binding.viewModel = viewModel // Set ViewModel untuk DataBinding
         return binding.root
     }
@@ -60,12 +59,6 @@ class EditProfileFragment : Fragment() {
         setupToolbar()
         setupClickListeners()
         observeViewModel()
-
-        // Tidak perlu memanggil loadUserProfile() di sini jika sudah dipanggil di init ViewModel
-        // Jika belum, Anda bisa memanggilnya di sini:
-        // if (viewModel.currentName.value == null) { // Hanya load jika data belum ada
-        //     viewModel.loadUserProfile()
-        // }
     }
 
     private fun setupToolbar() {
@@ -76,7 +69,7 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        binding.fabChangeProfilePicture.setOnClickListener {
+        binding.tvChangePhoto.setOnClickListener {
             openImagePicker()
         }
 
@@ -84,7 +77,6 @@ class EditProfileFragment : Fragment() {
             // Nilai sudah ada di ViewModel karena data binding dua arah
             val nameFromVM = viewModel.currentName.value ?: ""
             val nimFromVM = viewModel.currentNim.value // Bisa null
-            // val bioFromVM = viewModel.currentBio.value // Jika Anda pakai bio
 
             // Anda masih bisa melakukan validasi tambahan di sini jika perlu sebelum memanggil save
             if (nameFromVM.isBlank()) {
@@ -116,15 +108,10 @@ class EditProfileFragment : Fragment() {
                     .load(url)
                     .placeholder(R.drawable.ic_profile)
                     .error(R.drawable.avatar)
-                    .centerCrop() // Atau fitCenter() sesuai kebutuhan
+                    .centerCrop()
                     .into(binding.ivEditProfilePicture)
             }
         }
-
-        // Observasi selectedImageUri jika ingin logic tambahan saat URI berubah (selain pratinjau)
-        // viewModel.selectedImageUri.observe(viewLifecycleOwner) { uri ->
-        //     // uri bisa null jika gambar dibatalkan atau setelah upload
-        // }
 
         viewModel.profileUpdateStatus.observe(viewLifecycleOwner) { status ->
             when (status) {
