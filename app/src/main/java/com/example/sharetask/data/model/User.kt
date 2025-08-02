@@ -10,4 +10,5 @@ data class User(
     val followingCount: Int = 0,
     val followersCount: Int = 0,
     val nim: String? = null,
+    val isFriend: Boolean = false, // Menandai apakah user ini adalah teman
 )

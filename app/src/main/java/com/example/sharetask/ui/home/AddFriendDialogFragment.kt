@@ -151,6 +151,9 @@ class AddFriendDialogFragment : DialogFragment() {
             viewHolder?.binding?.btnAddUser?.text = "Adding..."
         }
 
+        // Gunakan batch untuk memastikan semua operasi berhasil atau gagal bersama
+        val batch = firestore.batch()
+        
         // Add to following collection
         val followingRef = firestore.collection("users")
             .document(currentUserId)
@@ -163,40 +166,57 @@ class AddFriendDialogFragment : DialogFragment() {
             "timestamp" to System.currentTimeMillis()
         )
 
-        followingRef.set(followingData)
+        batch.set(followingRef, followingData)
+        
+        // Add to followers collection of the other user
+        val followerRef = firestore.collection("users")
+            .document(user.uid)
+            .collection("followers")
+            .document(currentUserId)
+
+        val followerData = mapOf(
+            "uid" to currentUserId,
+            "timestamp" to System.currentTimeMillis()
+        )
+        
+        batch.set(followerRef, followerData)
+        
+        // Update followingCount pada user saat ini
+        val currentUserRef = firestore.collection("users").document(currentUserId)
+        batch.update(currentUserRef, "followingCount", com.google.firebase.firestore.FieldValue.increment(1))
+        
+        // Update followersCount pada user yang ditambahkan
+        val otherUserRef = firestore.collection("users").document(user.uid)
+        batch.update(otherUserRef, "followersCount", com.google.firebase.firestore.FieldValue.increment(1))
+        
+        // Commit batch
+        batch.commit()
             .addOnSuccessListener {
-                // Add to followers collection of the other user
-                val followerRef = firestore.collection("users")
-                    .document(user.uid)
-                    .collection("followers")
-                    .document(currentUserId)
-
-                val followerData = mapOf(
-                    "uid" to currentUserId,
-                    "timestamp" to System.currentTimeMillis()
-                )
-
-                followerRef.set(followerData)
-                    .addOnSuccessListener {
-                        // Update UI
-                        Toast.makeText(context, "Added ${user.name} as friend", Toast.LENGTH_SHORT).show()
-                        
-                        // Remove user from search results
-                        val currentList = userSearchAdapter.currentList.toMutableList()
-                        currentList.remove(user)
-                        userSearchAdapter.submitList(currentList)
-                        
-                        // Show no results if list is now empty
-                        if (currentList.isEmpty()) {
-                            showNoResults()
-                        }
-                        
-                        // Notify HomeFragment to refresh friend list
-                        (parentFragment as? HomeFragment)?.refreshData()
-                    }
-                    .addOnFailureListener { e ->
-                        showError("Error adding to followers: ${e.message}")
-                    }
+                // Update UI
+                Toast.makeText(context, "Added ${user.name} as friend", Toast.LENGTH_SHORT).show()
+                
+                // Remove user from search results
+                val currentList = userSearchAdapter.currentList.toMutableList()
+                currentList.remove(user)
+                userSearchAdapter.submitList(currentList)
+                
+                // Show no results if list is now empty
+                if (currentList.isEmpty()) {
+                    showNoResults()
+                }
+                
+                // Notify HomeFragment to refresh friend list
+                (parentFragment as? HomeFragment)?.refreshData()
+            }
+            .addOnFailureListener { e ->
+                showError("Error adding friend: ${e.message}")
+                
+                // Reset button state
+                if (position != -1) {
+                    val viewHolder = binding.rvSearchResults.findViewHolderForAdapterPosition(position) as? UserSearchAdapter.UserViewHolder
+                    viewHolder?.binding?.btnAddUser?.isEnabled = true
+                    viewHolder?.binding?.btnAddUser?.text = "Add"
+                }
             }
             .addOnFailureListener { e ->
                 showError("Error adding friend: ${e.message}")

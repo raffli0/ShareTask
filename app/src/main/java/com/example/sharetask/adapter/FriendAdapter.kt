@@ -9,7 +9,8 @@ import com.example.sharetask.data.model.User
 import com.example.sharetask.databinding.ItemFriendBinding
 import com.bumptech.glide.Glide
 
-class FriendAdapter : ListAdapter<User, FriendAdapter.FriendViewHolder>(FriendDiffCallback()) {
+class FriendAdapter(private val onFriendClick: (User) -> Unit) : 
+    ListAdapter<User, FriendAdapter.FriendViewHolder>(FriendDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
         val binding = ItemFriendBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -21,7 +22,7 @@ class FriendAdapter : ListAdapter<User, FriendAdapter.FriendViewHolder>(FriendDi
         holder.bind(friend)
     }
 
-    class FriendViewHolder(val binding: ItemFriendBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class FriendViewHolder(val binding: ItemFriendBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(user: User) {
             // Load profile image if available, otherwise use default
             if (user.profilePic != null) {
@@ -29,6 +30,14 @@ class FriendAdapter : ListAdapter<User, FriendAdapter.FriendViewHolder>(FriendDi
                     .load(user.profilePic)
                     .centerCrop()
                     .into(binding.imgProfile)
+            }
+            
+            // Set friend name
+            binding.tvFriendName.text = user.name
+            
+            // Set click listener to navigate to profile
+            binding.root.setOnClickListener {
+                onFriendClick(user)
             }
         }
     }

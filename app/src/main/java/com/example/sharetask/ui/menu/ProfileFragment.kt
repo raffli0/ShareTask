@@ -42,39 +42,100 @@ class ProfileFragment : Fragment() {
         return binding.root
     }
 
+    private var userId: String? = null
+    private var isFriend: Boolean = false
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Ambil userId dan isFriend dari argumen jika ada
+        arguments?.let {
+            userId = it.getString("userId")
+            isFriend = it.getBoolean("isFriend", false)
+        }
+        
+        // Jika userId null, gunakan user yang sedang login
+        if (userId == null) {
+            userId = FirebaseAuth.getInstance().currentUser?.uid
+        }
+        
+        // Load data user berdasarkan userId
         loadUserData()
 
         val requestOptions = RequestOptions()
             .placeholder(R.drawable.ic_profile) //load photo profile from drawable
             .error(R.drawable.ic_profile)
 
-        binding.ivSettings.setOnClickListener {
-            val fragment = ProfileSettingsFragment()
-            requireActivity()
-                .supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack("profile_fragment")
-                .commit()
+        // Tampilkan atau sembunyikan elemen UI berdasarkan apakah ini profil sendiri atau teman
+        if (userId == FirebaseAuth.getInstance().currentUser?.uid) {
+            // Ini adalah profil sendiri - tampilkan UI untuk pemilik profil
+            binding.tvAccountTitle.visibility = View.VISIBLE
+            binding.ivSettings.visibility = View.VISIBLE
+            binding.ivInfo.visibility = View.VISIBLE
+            binding.llOwnerButtons.visibility = View.VISIBLE
+            binding.llVisitorButtons.visibility = View.GONE
+            binding.tvLatestViewTitle.visibility = View.VISIBLE
+            binding.tvViewAllLatestPlay.visibility = View.VISIBLE
+            binding.rvLatestView.visibility = View.VISIBLE
+            
+            binding.ivSettings.setOnClickListener {
+                val fragment = ProfileSettingsFragment()
+                requireActivity()
+                    .supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack("profile_fragment")
+                    .commit()
+            }
+
+            binding.btnEditProfile.setOnClickListener {
+                val fragment = EditProfileFragment()
+                requireActivity()
+                    .supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack("profile_fragment")
+                    .commit()
+            }
+            
+            // Setup Latest View RecyclerView hanya untuk profil sendiri
+            setupLatestView()
+        } else {
+            // Ini adalah profil teman - tampilkan UI untuk pengunjung
+            binding.tvAccountTitle.visibility = View.GONE
+            binding.ivSettings.visibility = View.GONE
+            binding.ivInfo.visibility = View.GONE
+            binding.llOwnerButtons.visibility = View.GONE
+            binding.llVisitorButtons.visibility = View.VISIBLE
+            binding.btnFollowFriend.visibility = View.VISIBLE
+            binding.btnMessagesVisitor.visibility = View.VISIBLE
+            binding.tvLatestViewTitle.visibility = View.GONE
+            binding.tvViewAllLatestPlay.visibility = View.GONE
+            binding.rvLatestView.visibility = View.GONE
+            binding.tvEmptyLatestView.visibility = View.GONE
+            
+            // Set teks tombol berdasarkan status pertemanan
+            if (isFriend) {
+                binding.btnFollowFriend.text = "Unfollow"
+            } else {
+                binding.btnFollowFriend.text = "Follow"
+            }
+            
+            // Set listener untuk tombol follow/unfollow
+            binding.btnFollowFriend.setOnClickListener {
+                if (isFriend) {
+                    unfollowFriend()
+                } else {
+                    followFriend()
+                }
+            }
+            
+            // Set listener untuk tombol messages
+            binding.btnMessagesVisitor.setOnClickListener {
+                // Implementasi chat dengan teman akan ditambahkan nanti
+                Toast.makeText(context, "Chat feature coming soon", Toast.LENGTH_SHORT).show()
+            }
         }
-
-        // Tombol logout dipindahkan ke ProfileSettingsFragment
-
-        binding.btnEditProfile.setOnClickListener {
-            val fragment = EditProfileFragment()
-            requireActivity()
-                .supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack("profile_fragment")
-                .commit()
-        }
-
-        // Setup Latest View RecyclerView
-        setupLatestView()
     }
 
     // Fungsi performLogout() dipindahkan ke ProfileSettingsFragment
@@ -99,10 +160,10 @@ class ProfileFragment : Fragment() {
             
             // Tampilkan atau sembunyikan pesan kosong
             if (latestViews.isEmpty()) {
-                binding.tvEmptyLatestView?.visibility = View.VISIBLE
+                binding.tvEmptyLatestView.visibility = View.VISIBLE
                 binding.rvLatestView.visibility = View.GONE
             } else {
-                binding.tvEmptyLatestView?.visibility = View.GONE
+                binding.tvEmptyLatestView.visibility = View.GONE
                 binding.rvLatestView.visibility = View.VISIBLE
             }
         }
@@ -134,14 +195,17 @@ class ProfileFragment : Fragment() {
 
     fun refreshData() {
         loadUserData()
-        setupLatestView()
+        // Hanya setup latest view jika ini adalah profil sendiri
+        if (userId == FirebaseAuth.getInstance().currentUser?.uid) {
+            setupLatestView()
+        }
     }
     
     private fun loadUserData() {
         // Ambil data dari Firestore untuk memastikan data terbaru
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
-        if (currentUserId != null) {
-            FirebaseFirestore.getInstance().collection("users").document(currentUserId)
+        if (currentUserId != null && userId != null) {
+            FirebaseFirestore.getInstance().collection("users").document(userId!!)
                 .get()
                 .addOnSuccessListener { document ->
                     if (document != null && document.exists()) {
@@ -157,7 +221,7 @@ class ProfileFragment : Fragment() {
                         binding.chipRoleStatus.text = role
                         
                         // Ambil jumlah jawaban dari koleksi answers
-                        getAnswerCount(currentUserId) { answerCount ->
+                        getAnswerCount(userId!!) { answerCount ->
                             // Update statistik
                             updateStatistics(answerCount, followingCount, followersCount)
                         }
@@ -168,6 +232,11 @@ class ProfileFragment : Fragment() {
                                 .placeholder(R.drawable.ic_profile)
                                 .error(R.drawable.ic_profile))
                             .into(binding.ivProfilePicture)
+                            
+                        // Jika ini adalah profil teman, periksa status pertemanan
+                        if (userId != currentUserId) {
+                            checkFriendshipStatus()
+                        }
                     }
                 }
                 .addOnFailureListener { e ->
@@ -207,5 +276,123 @@ class ProfileFragment : Fragment() {
         followersCountTextView.text = followersCount.toString()
         
         // Friends count tetap menggunakan nilai default untuk saat ini
+    }
+    
+    private fun checkFriendshipStatus() {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserId != null && userId != null) {
+            // Periksa apakah user saat ini mengikuti user yang profilnya sedang dilihat
+            FirebaseFirestore.getInstance().collection("users")
+                .document(currentUserId)
+                .collection("following")
+                .document(userId!!)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        // User sudah mengikuti
+                        isFriend = true
+                        binding.btnFollowFriend.text = "Unfollow"
+                    } else {
+                        // User belum mengikuti
+                        isFriend = false
+                        binding.btnFollowFriend.text = "Follow"
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "Failed to check friendship status: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+    
+    private fun followFriend() {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserId != null && userId != null) {
+            // Tampilkan loading
+            binding.btnFollowFriend.isEnabled = false
+            binding.btnFollowFriend.text = "Loading..."
+            
+            val db = FirebaseFirestore.getInstance()
+            val batch = db.batch()
+            
+            // Tambahkan user yang dilihat ke koleksi following user saat ini
+            val followingRef = db.collection("users").document(currentUserId).collection("following").document(userId!!)
+            batch.set(followingRef, hashMapOf("timestamp" to System.currentTimeMillis()))
+            
+            // Tambahkan user saat ini ke koleksi followers user yang dilihat
+            val followerRef = db.collection("users").document(userId!!).collection("followers").document(currentUserId)
+            batch.set(followerRef, hashMapOf("timestamp" to System.currentTimeMillis()))
+            
+            // Update followingCount pada user saat ini
+            val currentUserRef = db.collection("users").document(currentUserId)
+            batch.update(currentUserRef, "followingCount", com.google.firebase.firestore.FieldValue.increment(1))
+            
+            // Update followersCount pada user yang dilihat
+            val otherUserRef = db.collection("users").document(userId!!)
+            batch.update(otherUserRef, "followersCount", com.google.firebase.firestore.FieldValue.increment(1))
+            
+            // Commit batch
+            batch.commit()
+                .addOnSuccessListener {
+                    // Update UI
+                    isFriend = true
+                    binding.btnFollowFriend.isEnabled = true
+                    binding.btnFollowFriend.text = "Unfollow"
+                    Toast.makeText(context, "Successfully followed user", Toast.LENGTH_SHORT).show()
+                    
+                    // Refresh data untuk memperbarui statistik
+                    loadUserData()
+                }
+                .addOnFailureListener { e ->
+                    binding.btnFollowFriend.isEnabled = true
+                    binding.btnFollowFriend.text = "Follow"
+                    Toast.makeText(context, "Failed to follow user: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+    
+    private fun unfollowFriend() {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserId != null && userId != null) {
+            // Tampilkan loading
+            binding.btnFollowFriend.isEnabled = false
+            binding.btnFollowFriend.text = "Loading..."
+            
+            val db = FirebaseFirestore.getInstance()
+            val batch = db.batch()
+            
+            // Hapus user yang dilihat dari koleksi following user saat ini
+            val followingRef = db.collection("users").document(currentUserId).collection("following").document(userId!!)
+            batch.delete(followingRef)
+            
+            // Hapus user saat ini dari koleksi followers user yang dilihat
+            val followerRef = db.collection("users").document(userId!!).collection("followers").document(currentUserId)
+            batch.delete(followerRef)
+            
+            // Update followingCount pada user saat ini
+            val currentUserRef = db.collection("users").document(currentUserId)
+            batch.update(currentUserRef, "followingCount", com.google.firebase.firestore.FieldValue.increment(-1))
+            
+            // Update followersCount pada user yang dilihat
+            val otherUserRef = db.collection("users").document(userId!!)
+            batch.update(otherUserRef, "followersCount", com.google.firebase.firestore.FieldValue.increment(-1))
+            
+            // Commit batch
+            batch.commit()
+                .addOnSuccessListener {
+                    // Update UI
+                    isFriend = false
+                    binding.btnFollowFriend.isEnabled = true
+                    binding.btnFollowFriend.text = "Follow"
+                    Toast.makeText(context, "Successfully unfollowed user", Toast.LENGTH_SHORT).show()
+                    
+                    // Refresh data untuk memperbarui statistik
+                    loadUserData()
+                }
+                .addOnFailureListener { e ->
+                    binding.btnFollowFriend.isEnabled = true
+                    binding.btnFollowFriend.text = "Unfollow"
+                    Toast.makeText(context, "Failed to unfollow user: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 }

@@ -36,15 +36,40 @@ class HomeViewModel : ViewModel() {
         FirebaseFirestore.getInstance()
             .collection("users")
             .document(currentUid)
-            .collection("following") // Atau "friends", sesuai struktur lo
+            .collection("following")
             .get()
             .addOnSuccessListener { result ->
-                val list = result.documents.mapNotNull {
-                    val uid = it.getString("uid") ?: return@mapNotNull null
-                    val name = it.getString("name") ?: ""
-                    User(uid = uid, name = name)
+                val friendIds = result.documents.mapNotNull { it.getString("uid") }
+                
+                if (friendIds.isEmpty()) {
+                    _friendList.value = emptyList()
+                    return@addOnSuccessListener
                 }
-                _friendList.value = list
+                
+                // Ambil detail lengkap untuk setiap teman dari koleksi users
+                val usersList = mutableListOf<User>()
+                
+                for (friendId in friendIds) {
+                    FirebaseFirestore.getInstance()
+                        .collection("users")
+                        .document(friendId)
+                        .get()
+                        .addOnSuccessListener { userDoc ->
+                            val user = userDoc.toObject(User::class.java)?.copy(
+                                uid = friendId,
+                                isFriend = true
+                            )
+                            
+                            if (user != null) {
+                                usersList.add(user)
+                                _friendList.value = usersList.toList()
+                            }
+                        }
+                }
+            }
+            .addOnFailureListener { exception ->
+                // Handle error
+                _friendList.value = emptyList()
             }
     }
 

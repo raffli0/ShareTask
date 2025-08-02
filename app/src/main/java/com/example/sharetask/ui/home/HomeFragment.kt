@@ -26,7 +26,9 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
     private var selectedSubject: Subject? = null
-    private val friendAdapter = FriendAdapter()
+    private val friendAdapter = FriendAdapter { friend ->
+        navigateToFriendProfile(friend)
+    }
     private val questionAdapter = QuestionAdapter { question ->
         val bundle = Bundle().apply {
             putString("questionId", question.id)
@@ -211,5 +213,24 @@ class HomeFragment : Fragment() {
     private fun showAddFriendDialog() {
         val dialogFragment = AddFriendDialogFragment()
         dialogFragment.show(childFragmentManager, "AddFriendDialog")
+    }
+    
+    private fun navigateToFriendProfile(friend: com.example.sharetask.data.model.User) {
+        // Buat bundle untuk mengirim data ke ProfileFragment
+        val bundle = Bundle().apply {
+            putString("userId", friend.uid)
+            putBoolean("isFriend", true)
+        }
+        
+        // Navigasi ke ProfileFragment dengan data teman
+        val fragment = com.example.sharetask.ui.menu.ProfileFragment().apply {
+            arguments = bundle
+        }
+        
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, fragment, "profile_fragment")
+            .addToBackStack("profile_fragment")
+            .commit()
     }
 }
