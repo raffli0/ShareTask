@@ -132,8 +132,18 @@ class ProfileFragment : Fragment() {
             
             // Set listener untuk tombol messages
             binding.btnMessagesVisitor.setOnClickListener {
-                // Implementasi chat dengan teman akan ditambahkan nanti
-                Toast.makeText(context, "Chat feature coming soon", Toast.LENGTH_SHORT).show()
+                // Navigasi ke ChatFragment
+                val fragment = ChatFragment.newInstance(
+                    userId = userId!!, 
+                    userName = binding.tvUserName.text.toString(),
+                    userProfilePic = binding.ivProfilePicture.tag as? String
+                )
+                
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack("profile_fragment")
+                    .commit()
             }
         }
     }
@@ -225,6 +235,9 @@ class ProfileFragment : Fragment() {
                             // Update statistik
                             updateStatistics(answerCount, followingCount, followersCount)
                         }
+                        
+                        // Simpan URL gambar profil sebagai tag untuk digunakan nanti
+                        binding.ivProfilePicture.tag = profilePicUrl
                         
                         Glide.with(this)
                             .load(profilePicUrl)
