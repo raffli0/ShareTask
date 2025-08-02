@@ -151,14 +151,16 @@ class ProfileFragment : Fragment() {
                         val role = document.getString("role") ?: "Beginner"
                         val followingCount = document.getLong("followingCount")?.toInt() ?: 0
                         val followersCount = document.getLong("followersCount")?.toInt() ?: 0
-                        val rewardPoints = document.getLong("rewardPoints")?.toInt() ?: 0
                         
                         // Update nama dan foto profil
                         binding.tvUserName.text = name ?: "User"
                         binding.chipRoleStatus.text = role
                         
-                        // Update statistik
-                        updateStatistics(rewardPoints, followingCount, followersCount)
+                        // Ambil jumlah jawaban dari koleksi answers
+                        getAnswerCount(currentUserId) { answerCount ->
+                            // Update statistik
+                            updateStatistics(answerCount, followingCount, followersCount)
+                        }
                         
                         Glide.with(this)
                             .load(profilePicUrl)
@@ -174,14 +176,25 @@ class ProfileFragment : Fragment() {
         }
     }
     
-    private fun updateStatistics(rewardPoints: Int, followingCount: Int, followersCount: Int) {
+    private fun getAnswerCount(userId: String, callback: (Int) -> Unit) {
+        FirebaseFirestore.getInstance().collection("answers")
+            .whereEqualTo("userId", userId)
+            .get()
+            .addOnSuccessListener { documents ->
+                callback(documents.size())
+            }
+            .addOnFailureListener { e ->
+                callback(0)
+                Toast.makeText(context, "Failed to load answer count: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+    
+    private fun updateStatistics(answerCount: Int, followingCount: Int, followersCount: Int) {
         // Dapatkan semua TextView dalam LinearLayout stats
         val statsLayout = binding.llStats
         
-        // Update Answer count (index 0)
-        val answerLayout = statsLayout.getChildAt(0) as LinearLayout
-        val answerCountTextView = answerLayout.getChildAt(0) as TextView
-        answerCountTextView.text = rewardPoints.toString()
+        // Update Answer count menggunakan ID yang sudah ditambahkan
+        binding.tvAnswerCount.text = answerCount.toString()
         
         // Update Following count (index 1)
         val followingLayout = statsLayout.getChildAt(1) as LinearLayout

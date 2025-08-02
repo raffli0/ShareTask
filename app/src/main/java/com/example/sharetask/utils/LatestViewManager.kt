@@ -40,10 +40,22 @@ class LatestViewManager private constructor(context: Context) {
     
     /**
      * Menambahkan pertanyaan ke daftar latest view di Firestore
+     * Jika questionId sudah ada, hanya update viewedAt
      */
     fun addQuestion(question: Question) {
         if (userId.isEmpty()) {
             Log.w(TAG, "Cannot add to latest view: User not logged in")
+            return
+        }
+        
+        // Cek apakah questionId sudah ada di latest view
+        val currentLatestViews = _latestViewList.value ?: emptyList()
+        val existingView = currentLatestViews.find { it.questionId == question.id }
+        
+        if (existingView != null) {
+            // Update viewedAt untuk view yang sudah ada
+            Log.d(TAG, "Question already in latest view, updating viewedAt: questionId=${question.id}")
+            updateViewedAt(existingView.id, question.id)
             return
         }
         
@@ -76,6 +88,50 @@ class LatestViewManager private constructor(context: Context) {
                 Log.e(TAG, "Error adding latest view", e)
             }
     }
+    
+    /**
+     * Update viewedAt untuk latest view yang sudah ada
+     */
+    private fun updateViewedAt(viewId: String, questionId: String) {
+        val currentTime = System.currentTimeMillis()
+        
+        firestore.collection(COLLECTION_USERS)
+            .document(userId)
+            .collection(COLLECTION_LATEST_VIEWS)
+            .document(viewId)
+            .update("viewedAt", currentTime)
+            .addOnSuccessListener {
+                Log.d(TAG, "Updated viewedAt for questionId=$questionId to $currentTime")
+                // Reload data setelah update
+                loadLatestViewList()
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error updating viewedAt for questionId=$questionId", e)
+            }
+    }
+    
+    /**
+      * Mendapatkan jumlah view untuk suatu questionId
+      */
+     fun getViewCount(questionId: String, callback: (Int) -> Unit) {
+         if (userId.isEmpty()) {
+             Log.w(TAG, "Cannot get view count: User not logged in")
+             callback(0)
+             return
+         }
+         
+         firestore.collection("questions")
+             .document(questionId)
+             .collection("views")
+             .get()
+             .addOnSuccessListener { documents ->
+                 callback(documents.size())
+             }
+             .addOnFailureListener { e ->
+                 Log.e(TAG, "Error getting view count for questionId=$questionId", e)
+                 callback(0)
+             }
+     }
     
     // Removed getLatestViewList() method as it conflicts with the latestViewList property
     // which already provides the same functionality

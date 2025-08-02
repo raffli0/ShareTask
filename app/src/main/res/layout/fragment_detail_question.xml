@@ -10,13 +10,13 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:colorBackground">
+        android:background="@color/white">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar_layout_detail_question"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorSurface"
+            android:background="@color/white"
             app:elevation="4dp">
 
             <com.google.android.material.appbar.MaterialToolbar
@@ -25,29 +25,39 @@
                 android:layout_height="?attr/actionBarSize"
                 app:navigationIcon="@drawable/arrow_back"
                 app:title="Answer"
-                app:titleTextColor="?attr/colorOnSurface" />
+                app:titleTextColor="@color/black" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.core.widget.NestedScrollView
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <LinearLayout
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nested_scroll_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="80dp"> <!-- Padding bawah untuk memberi ruang bagi FAB atau input -->
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="vertical"
+                android:fadeScrollbars="false"
+                android:overScrollMode="never">
 
-                <!-- Bagian Konten Pertanyaan Utama -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card_question_content"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    app:cardElevation="2dp"
-                    app:cardCornerRadius="8dp">
+                    android:orientation="vertical"
+                    android:paddingBottom="80dp"> <!-- Padding bawah untuk memberi ruang bagi FAB atau input -->
+
+                    <!-- Bagian Konten Pertanyaan Utama -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_question_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        app:cardElevation="2dp"
+                        app:cardCornerRadius="8dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -78,7 +88,7 @@
                                 android:layout_marginStart="12dp"
                                 tools:text="Jane Doe"
                                 android:textAppearance="?attr/textAppearanceSubtitle1"
-                                android:textColor="?attr/colorOnSurface"
+                                android:textColor="@color/black"
                                 android:textStyle="bold"
                                 app:layout_constraintStart_toEndOf="@+id/iv_asker_avatar"
                                 app:layout_constraintTop_toTopOf="@+id/iv_asker_avatar"
@@ -86,14 +96,15 @@
 
                             <TextView
                                 android:id="@+id/tv_question_time"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 tools:text="Posted 2 hours ago"
                                 android:textAppearance="?attr/textAppearanceCaption"
-                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textColor="@color/gray_medium"
                                 app:layout_constraintStart_toStartOf="@+id/tv_asker_name"
-                                app:layout_constraintTop_toBottomOf="@+id/tv_asker_name"
-                                app:layout_constraintEnd_toEndOf="parent"/>
+                                app:layout_constraintTop_toBottomOf="@+id/tv_asker_name"/>
+
+
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -104,7 +115,7 @@
                             android:layout_height="wrap_content"
                             tools:text="How to implement RecyclerView with multiple view types?"
                             android:textAppearance="?attr/textAppearanceHeadline6"
-                            android:textColor="?attr/colorOnSurface"
+                            android:textColor="@color/black"
                             android:layout_marginBottom="8dp"/>
 
                         <!-- Isi Pertanyaan -->
@@ -114,7 +125,7 @@
                             android:layout_height="wrap_content"
                             tools:text="I'm trying to create a complex list in my Android app using RecyclerView. I need to display different types of items (e.g., headers, image items, text items) in the same list. What's the best approach to handle this? Any code examples would be greatly appreciated. Thanks!"
                             android:textAppearance="?attr/textAppearanceBody1"
-                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textColor="@color/gray_medium"
                             android:lineSpacingMultiplier="1.2"
                             android:layout_marginBottom="16dp"/>
 
@@ -148,7 +159,7 @@
                     android:layout_height="wrap_content"
                     android:text="Answers (3)"
                     android:textAppearance="?attr/textAppearanceSubtitle1"
-                    android:textColor="?attr/colorOnSurface"
+                    android:textColor="@color/black"
                     android:textStyle="bold"
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
@@ -201,6 +212,7 @@
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <!-- Tombol Aksi Mengambang (Floating Action Button) untuk Menjawab -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -211,7 +223,10 @@
             android:layout_margin="16dp"
             android:src="@drawable/ic_forum"
             app:tint="@color/white"
+            android:backgroundTint="@color/blue"
             android:contentDescription="Answer this question" />
+
+        <!-- Tombol Scroll Up dihapus -->
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

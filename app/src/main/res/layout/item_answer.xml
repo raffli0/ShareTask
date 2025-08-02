@@ -83,7 +83,9 @@
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_upload"
+                android:src="@drawable/ic_thumbs_up"
+                app:tint="?attr/colorOnSurfaceVariant"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Upvote" /> <!-- ubah ke ic thumbsup -->
 
             <TextView
@@ -101,7 +103,9 @@
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_forum"
+                android:src="@drawable/ic_reply"
+                app:tint="?attr/colorOnSurfaceVariant"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Reply to answer" /> <!-- ubah ke ic reply -->
         </LinearLayout>
 

@@ -23,16 +23,13 @@ class AnswerAdapter : ListAdapter<Answer, AnswerAdapter.AnswerViewHolder>(DIFF_C
 
     inner class AnswerViewHolder(private val binding: ItemAnswerBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(answer: Answer) {
-            // Set answerer name
             binding.tvAnswererName.text = answer.userName
             
-            // Set answer content
             binding.tvAnswerBody.text = answer.content
             
-            // Set time ago
             binding.tvAnswerTime.text = getTimeAgo(answer.timestamp)
             
-            // Load user photo if available
+            // Load user photo jika ada
             answer.userPhotoUrl?.let { photoUrl ->
                 Glide.with(binding.root)
                     .load(photoUrl)
