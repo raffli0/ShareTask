@@ -26,7 +26,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
     private var selectedSubject: Subject? = null
-    private val friendAdapter = FriendAdapter(emptyList())
+    private val friendAdapter = FriendAdapter()
     private val questionAdapter = QuestionAdapter { question ->
         val bundle = Bundle().apply {
             putString("questionId", question.id)
@@ -71,7 +71,7 @@ class HomeFragment : Fragment() {
         with(binding) {
             viewModel.loadQuestion() // Load question when fragment is created
             rvDiscovery.adapter = questionAdapter
-            rvFriendlist.adapter = FriendAdapter(emptyList())
+            rvFriendlist.adapter = friendAdapter
 
             // Setup Categories
             setupCategories()
@@ -97,11 +97,10 @@ class HomeFragment : Fragment() {
             }
 
             btnAddFriendEmptyState.setOnClickListener {
-                // Navigasi ke halaman Add Friend atau buka dialog/bottom sheet untuk menambah teman
-                // Contoh: findNavController().navigate(R.id.action_homeFragment_to_addFriendFragment)
+                showAddFriendDialog()
             }
             btnAddFriendHeader.setOnClickListener {
-
+                showAddFriendDialog()
             }
         }
     }
@@ -178,7 +177,7 @@ class HomeFragment : Fragment() {
                 binding.rvFriendlist.visibility = View.VISIBLE
                 binding.emptyFriendListLayout.visibility = View.GONE
                 binding.btnAddFriendHeader.visibility = View.VISIBLE // Tampilkan tombol "+" di header
-                friendAdapter.itemCount
+                friendAdapter.submitList(friends)
             }
         }
     }
@@ -207,5 +206,10 @@ class HomeFragment : Fragment() {
 
     private fun getSampleFriends(): List<String> {
         return listOf("Friend 1", "Friend 2", "Friend 3", "Friend 4", "Friend 5")
+    }
+    
+    private fun showAddFriendDialog() {
+        val dialogFragment = AddFriendDialogFragment()
+        dialogFragment.show(childFragmentManager, "AddFriendDialog")
     }
 }
